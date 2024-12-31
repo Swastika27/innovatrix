@@ -3,6 +3,8 @@ package com.innovatrix.ahaar.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Setter
 @Getter
 @Data
@@ -10,7 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @Entity
 @Table(name = "Users")
-public class MyUser {
+public class MyUser extends Auditable<String> implements Serializable {
 	@Id
 	@SequenceGenerator(
 			name = "user_id_sequence",
