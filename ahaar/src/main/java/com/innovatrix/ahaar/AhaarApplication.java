@@ -1,6 +1,6 @@
 package com.innovatrix.ahaar;
 
-import com.innovatrix.ahaar.model.MyUser;
+import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,17 +21,17 @@ public class AhaarApplication {
 	@Bean
 	CommandLineRunner runner(UserRepository userRepository) {
 		return args -> {
-			MyUser myUser1 = new MyUser("SwastikaPandit",
+			ApplicationUser applicationUser1 = new ApplicationUser("SwastikaPandit",
 					"swastikapandit@gmail.com",
 					"abcdef");
-			MyUser myUser2 = new MyUser("FairuzMubashwera",
+			ApplicationUser applicationUser2 = new ApplicationUser("FairuzMubashwera",
 					"fairuz@gmail.com",
 					"12345");
-			MyUser myUser3 = new MyUser("MetalyKhatun",
+			ApplicationUser applicationUser3 = new ApplicationUser("MetalyKhatun",
 					"metaly@gmail.com",
 					"12345");
 
-			userRepository.saveAll(List.of(myUser1, myUser2, myUser3));
+			userRepository.saveAll(List.of(applicationUser1, applicationUser2, applicationUser3));
 		};
 	}
 }

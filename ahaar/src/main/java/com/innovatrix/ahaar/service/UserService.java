@@ -1,6 +1,6 @@
 package com.innovatrix.ahaar.service;
 
-import com.innovatrix.ahaar.model.MyUser;
+import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -15,13 +15,13 @@ public class UserService {
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-    public List<MyUser> getUsers() {
+    public List<ApplicationUser> getUsers() {
         return userRepository.findAll();
 
     }
 
-    public void addUser(MyUser user) {
-        Optional<MyUser> userOptional = userRepository.findByEmail(user.getEmail());
+    public void addUser(ApplicationUser user) {
+        Optional<ApplicationUser> userOptional = userRepository.findByEmail(user.getEmail());
         if (userOptional.isPresent()) {
             throw new IllegalStateException("User with this email already exists");
         }
@@ -29,8 +29,8 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(Long userId, MyUser user) {
-        Optional<MyUser> userOptional = userRepository.findById(userId);
+    public void updateUser(Long userId, ApplicationUser user) {
+        Optional<ApplicationUser> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
             throw new IllegalStateException("User with this id does not exist");
         }
@@ -43,15 +43,15 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        Optional<MyUser> userOptional = userRepository.findById(id);
+        Optional<ApplicationUser> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
             throw new IllegalStateException("User with this id does not exist");
         }
         userRepository.deleteById(id);
     }
 
-    public Optional<MyUser> getUserById(Long id) {
-        Optional<MyUser> userOptional = userRepository.findById(id);
+    public Optional<ApplicationUser> getUserById(Long id) {
+        Optional<ApplicationUser> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
             throw new IllegalStateException("User with this id does not exist");
         }

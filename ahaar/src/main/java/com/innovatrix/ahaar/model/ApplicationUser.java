@@ -5,14 +5,13 @@ import lombok.*;
 
 import java.io.Serializable;
 
-@Setter
-@Getter
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "Users")
-public class MyUser extends Auditable<String> implements Serializable {
+public class ApplicationUser extends Auditable<String> implements Serializable {
 	@Id
 	@SequenceGenerator(
 			name = "user_id_sequence",
@@ -45,7 +44,7 @@ public class MyUser extends Auditable<String> implements Serializable {
 	)
 	private String password;
 
-	public MyUser(String userName, String email, String password) {
+	public ApplicationUser(String userName, String email, String password) {
 		this.userName = userName;
 		this.email = email;
 		this.password = password;
