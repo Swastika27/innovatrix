@@ -21,26 +21,32 @@ public class UserService {
 
     }
 
-    public void addUser(ApplicationUserDTO user) {
+    public Optional<ApplicationUser> addUser(ApplicationUserDTO user) {
         Optional<ApplicationUser> userOptional = userRepository.findByEmail(user.getEmail());
         if (userOptional.isPresent()) {
             throw new IllegalStateException("User with this email already exists");
         }
         userRepository.save(user.toEntity());
+        return userRepository.findByEmail(user.getEmail());
     }
 
     @Transactional
-    public void updateUser(Long userId, ApplicationUserDTO user) {
+    public ApplicationUser updateUser(Long userId, ApplicationUserDTO user) {
         Optional<ApplicationUser> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
             throw new IllegalStateException("User with this id does not exist");
         }
-        if(!user.getEmail().isEmpty() && !user.getUserName().isEmpty() && !user.getPassword().isEmpty()) {
-            userRepository.save(user.toEntity());
+        if(user.getEmail().isEmpty() || user.getPassword().isEmpty() || user.getUserName().isEmpty()) {
+            throw new IllegalStateException(
+                    "Required fields are missing in update operation"
+            );
         }
-        throw new IllegalStateException(
-                "Required fields are missing in update operation"
-        );
+        userOptional.get().setUserName(user.getUserName());
+        userOptional.get().setEmail(user.getEmail());
+        userOptional.get().setPassword(user.getPassword());
+
+        userRepository.save(userOptional.get());
+        return userOptional.get();
     }
 
     public void deleteUser(Long id) {
