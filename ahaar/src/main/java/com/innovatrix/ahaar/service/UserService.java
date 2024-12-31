@@ -1,6 +1,7 @@
 package com.innovatrix.ahaar.service;
 
 import com.innovatrix.ahaar.model.ApplicationUser;
+import com.innovatrix.ahaar.model.ApplicationUserDTO;
 import com.innovatrix.ahaar.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -20,22 +21,22 @@ public class UserService {
 
     }
 
-    public void addUser(ApplicationUser user) {
+    public void addUser(ApplicationUserDTO user) {
         Optional<ApplicationUser> userOptional = userRepository.findByEmail(user.getEmail());
         if (userOptional.isPresent()) {
             throw new IllegalStateException("User with this email already exists");
         }
-        userRepository.save(user);
+        userRepository.save(user.toEntity());
     }
 
     @Transactional
-    public void updateUser(Long userId, ApplicationUser user) {
+    public void updateUser(Long userId, ApplicationUserDTO user) {
         Optional<ApplicationUser> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
             throw new IllegalStateException("User with this id does not exist");
         }
         if(!user.getEmail().isEmpty() && !user.getUserName().isEmpty() && !user.getPassword().isEmpty()) {
-            userRepository.save(user);
+            userRepository.save(user.toEntity());
         }
         throw new IllegalStateException(
                 "Required fields are missing in update operation"

@@ -49,4 +49,8 @@ public class ApplicationUser extends Auditable<String> implements Serializable {
 		this.email = email;
 		this.password = password;
 	}
+
+	public ApplicationUserDTO toDTO() {
+		return new ApplicationUserDTO(this.userName, this.email, this.password);
+	}
 }

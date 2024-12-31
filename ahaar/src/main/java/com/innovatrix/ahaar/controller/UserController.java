@@ -1,6 +1,7 @@
 package com.innovatrix.ahaar.controller;
 
 import com.innovatrix.ahaar.model.ApplicationUser;
+import com.innovatrix.ahaar.model.ApplicationUserDTO;
 import com.innovatrix.ahaar.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,14 +31,14 @@ public class UserController {
     }
 
     @PostMapping
-    public void addUser(@RequestBody ApplicationUser user) {
-        userService.addUser(user);
+    public void addUser(@RequestBody ApplicationUserDTO userDTO) {
+        userService.addUser(userDTO);
     }
 
     @PutMapping(path = "{user_id}")
     public void updateUser(@PathVariable("user_id") Long userId,
-                           @RequestBody ApplicationUser user) {
-        userService.updateUser(userId, user);
+                           @RequestBody ApplicationUserDTO userDTO) {
+        userService.updateUser(userId, userDTO);
     }
 
     @DeleteMapping(path = "{user_id}")
