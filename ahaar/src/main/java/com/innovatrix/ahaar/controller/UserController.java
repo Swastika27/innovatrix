@@ -29,9 +29,9 @@ public class UserController {
         List<ApplicationUser> allUsers =  userService.getUsers();
         if(allUsers.isEmpty()) {
             return ResponseEntity.status(404)
-                    .body(ResponseBuilder.error("User not found", null));
+                    .body(ResponseBuilder.error(HttpStatus.NOT_FOUND.value(), "No user to retrieve", allUsers));
         }
-        return ResponseEntity.ok(ResponseBuilder.success("User retrieved successfully", allUsers));
+        return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "User retrieved successfully", allUsers));
     }
 
     @GetMapping(path = "{user_id}")
@@ -40,30 +40,30 @@ public class UserController {
 
         if(user.isEmpty()) {
             return ResponseEntity.status(404)
-                    .body(ResponseBuilder.error("User not found", null));
+                    .body(ResponseBuilder.error(HttpStatus.NOT_FOUND.value(), "User not found", null));
         }
 
-        return ResponseEntity.ok(ResponseBuilder.success("User retrieved successfully", user));
+        return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "User retrieved successfully", user));
     }
 
     @PostMapping
     public ResponseEntity<APIResponse<Optional<ApplicationUser>>> addUser(@RequestBody ApplicationUserDTO userDTO) {
         Optional<ApplicationUser> newUser = userService.addUser(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ResponseBuilder.success("User created successfully", newUser));
+                .body(ResponseBuilder.success(HttpStatus.OK.value(), "User created successfully", newUser));
     }
 
     @PutMapping(path = "{user_id}")
     public ResponseEntity<APIResponse<ApplicationUserDTO>> updateUser(@PathVariable("user_id") Long userId,
                            @RequestBody ApplicationUserDTO userDTO) {
         userService.updateUser(userId, userDTO);
-        return ResponseEntity.ok(ResponseBuilder.success("User updated successfully", userDTO));
+        return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(),"User updated successfully", userDTO));
     }
 
     @DeleteMapping(path = "{user_id}")
     public ResponseEntity<APIResponse<ApplicationUserDTO>> deleteUser(@PathVariable("user_id") Long userId) {
         userService.deleteUser(userId);
-        return ResponseEntity.ok(ResponseBuilder.success("User deleted successfully", null));
+        return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(),"User deleted successfully", null));
 
     }
 }

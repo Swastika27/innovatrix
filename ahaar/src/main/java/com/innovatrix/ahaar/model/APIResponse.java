@@ -1,14 +1,22 @@
 package com.innovatrix.ahaar.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class APIResponse<T> {
-    private String status; // e.g., "success" or "error"
-    private String message; // A descriptive response message
-    private T data; // Generic field to hold any type of data
+    private int statusCode; // HTTP status code
+    private String responseMessage; // Status message (e.g., "Success", "Error")
+    private T data; // The actual data (can be any type)
+
+    // Constructor for just status code and message
+    public APIResponse(int statusCode, String responseMessage) {
+        this.statusCode = statusCode;
+        this.responseMessage = responseMessage;
+    }
 }
+
 
