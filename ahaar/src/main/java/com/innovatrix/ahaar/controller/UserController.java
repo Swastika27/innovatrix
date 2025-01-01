@@ -7,6 +7,7 @@ import com.innovatrix.ahaar.service.UserService;
 import com.innovatrix.ahaar.service.UserServiceInterface;
 import com.innovatrix.ahaar.util.ResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +27,16 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<APIResponse<List<ApplicationUser>>> getUsers() {
-        List<ApplicationUser> allUsers =  userService.getUsers();
+    public ResponseEntity<APIResponse<Page<ApplicationUser>>> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<ApplicationUser> allUsers =  userService.getUsers(page, size);
+
         if(allUsers.isEmpty()) {
             return ResponseEntity.status(404)
                     .body(ResponseBuilder.error(HttpStatus.NOT_FOUND.value(), "No user to retrieve", allUsers));
         }
+
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "User retrieved successfully", allUsers));
     }
 

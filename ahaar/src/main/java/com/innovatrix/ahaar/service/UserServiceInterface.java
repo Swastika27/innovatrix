@@ -2,12 +2,13 @@ package com.innovatrix.ahaar.service;
 
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.ApplicationUserDTO;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface UserServiceInterface {
-    List<ApplicationUser> getUsers();
+    Page<ApplicationUser> getUsers(int page, int size);
 
     Optional<ApplicationUser> addUser(ApplicationUserDTO user);
 

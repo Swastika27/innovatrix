@@ -4,9 +4,11 @@ import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.ApplicationUserDTO;
 import com.innovatrix.ahaar.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,9 +19,9 @@ public class UserService implements UserServiceInterface {
         this.userRepository = userRepository;
     }
 
-    public List<ApplicationUser> getUsers() {
-        return userRepository.findAll();
-
+    public Page<ApplicationUser> getUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAll(pageable);
     }
 
     private void checkConditions(ApplicationUserDTO user) {
