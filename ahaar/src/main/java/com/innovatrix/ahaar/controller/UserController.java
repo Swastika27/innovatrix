@@ -4,6 +4,7 @@ import com.innovatrix.ahaar.model.APIResponse;
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.ApplicationUserDTO;
 import com.innovatrix.ahaar.service.UserService;
+import com.innovatrix.ahaar.service.UserServiceInterface;
 import com.innovatrix.ahaar.util.ResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @RequestMapping()
 public class UserController {
 
-    UserService userService;
+    UserServiceInterface userService;
 
     @Autowired
     public UserController(UserService userService) {
