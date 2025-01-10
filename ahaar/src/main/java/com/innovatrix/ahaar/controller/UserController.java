@@ -2,8 +2,8 @@ package com.innovatrix.ahaar.controller;
 
 import com.innovatrix.ahaar.model.APIResponse;
 import com.innovatrix.ahaar.model.ApplicationUser;
-import com.innovatrix.ahaar.model.ApplicationUserDTO;
-import com.innovatrix.ahaar.model.LoginDTO;
+import com.innovatrix.ahaar.DTO.ApplicationUserDTO;
+import com.innovatrix.ahaar.DTO.LoginDTO;
 import com.innovatrix.ahaar.service.UserService;
 import com.innovatrix.ahaar.service.UserServiceInterface;
 import com.innovatrix.ahaar.util.ResponseBuilder;
@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController()

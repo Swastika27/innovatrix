@@ -1,8 +1,8 @@
 package com.innovatrix.ahaar.service;
 
 import com.innovatrix.ahaar.model.ApplicationUser;
-import com.innovatrix.ahaar.model.ApplicationUserDTO;
-import com.innovatrix.ahaar.model.LoginDTO;
+import com.innovatrix.ahaar.DTO.ApplicationUserDTO;
+import com.innovatrix.ahaar.DTO.LoginDTO;
 import com.innovatrix.ahaar.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

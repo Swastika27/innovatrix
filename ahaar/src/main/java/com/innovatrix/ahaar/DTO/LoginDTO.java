@@ -1,4 +1,4 @@
-package com.innovatrix.ahaar.model;
+package com.innovatrix.ahaar.DTO;
 
 import lombok.Data;
 

@@ -1,6 +1,6 @@
-package com.innovatrix.ahaar.model;
+package com.innovatrix.ahaar.DTO;
 
-import lombok.*;
+import com.innovatrix.ahaar.model.ApplicationUser;
 
 
 public class ApplicationUserDTO {

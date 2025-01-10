@@ -1,11 +1,10 @@
 package com.innovatrix.ahaar.service;
 
 import com.innovatrix.ahaar.model.ApplicationUser;
-import com.innovatrix.ahaar.model.ApplicationUserDTO;
-import com.innovatrix.ahaar.model.LoginDTO;
+import com.innovatrix.ahaar.DTO.ApplicationUserDTO;
+import com.innovatrix.ahaar.DTO.LoginDTO;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserServiceInterface {
