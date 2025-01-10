@@ -88,21 +88,21 @@ public class UserController {
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
         JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
                 .accessToken(jwtToken)
-                .token(refreshToken.getToken()).build();
+                .refreshToken(refreshToken.getToken()).build();
 
         return ResponseEntity.status(HttpStatus.OK).body(ResponseBuilder.success(HttpStatus.OK.value(), "logged in successfully", jwtResponseDTO))    ;
     }
 
     @PostMapping("/refreshToken")
     public ResponseEntity<APIResponse<JwtResponseDTO>> getRefreshToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequest) {
-        return refreshTokenService.findByToken(refreshTokenRequest.getToken())
+        return refreshTokenService.findByToken(refreshTokenRequest.getRefreshToken())
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(userInfo -> {
                     String accessToken = jwtService.generateToken(userInfo.toDTO().getUserName());
                     JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
                             .accessToken(accessToken)
-                            .token(refreshTokenRequest.getToken())
+                            .refreshToken(refreshTokenRequest.getRefreshToken())
                             .build();
                     return ResponseEntity.status(HttpStatus.OK).body(ResponseBuilder.success(HttpStatus.OK.value(), "JWT token generated successfully", jwtResponseDTO));
                 }).orElseThrow(() -> new RuntimeException(

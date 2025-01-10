@@ -115,7 +115,6 @@ public class UserService implements UserServiceInterface {
             }
             redisService.set(redisKey, userOptional.get(), 1);
             return userOptional;
-
         }
     }
     @Override
