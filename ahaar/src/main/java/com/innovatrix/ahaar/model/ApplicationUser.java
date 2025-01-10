@@ -30,7 +30,8 @@ public class ApplicationUser extends Auditable<String> implements Serializable {
 
 	@Column(
 			name = "user_name",
-			nullable = false
+			nullable = false,
+			unique = true
 	)
 	private String userName;
 
