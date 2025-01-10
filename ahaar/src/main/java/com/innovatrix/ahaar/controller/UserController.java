@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController()
@@ -62,10 +63,10 @@ public class UserController {
     }
 
     @PutMapping(path = "{user_id}")
-    public ResponseEntity<APIResponse<ApplicationUser>> updateUser(@PathVariable("user_id") Long userId,
+    public ResponseEntity<APIResponse<ApplicationUserDTO>> updateUser(@PathVariable("user_id") Long userId,
                            @RequestBody ApplicationUserDTO userDTO) {
-
-        return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(),"User updated successfully", userService.updateUser(userId, userDTO)));
+        userService.updateUser(userId, userDTO);
+        return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(),"User updated successfully", userDTO));
     }
 
     @DeleteMapping(path = "{user_id}")
