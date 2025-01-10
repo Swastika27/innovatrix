@@ -90,13 +90,18 @@ public class UserController {
      +     */
     @PostMapping("/login")
     public ResponseEntity<APIResponse<JwtResponseDTO>> authenticateAndGetToken(@RequestBody LoginDTO loginDTO) {
-        String jwtToken = userService.login(loginDTO);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
-        JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
-                .accessToken(jwtToken)
-                .refreshToken(refreshToken.getToken()).build();
+        try {
+            String jwtToken = userService.login(loginDTO);
+            RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
+            JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken.getToken()).build();
 
-        return ResponseEntity.status(HttpStatus.OK).body(ResponseBuilder.success(HttpStatus.OK.value(), "logged in successfully", jwtResponseDTO))    ;
+            return ResponseEntity.status(HttpStatus.OK).body(ResponseBuilder.success(HttpStatus.OK.value(), "logged in successfully", jwtResponseDTO))    ;
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(ResponseBuilder.error(HttpStatus.UNAUTHORIZED.value(), "Authentication failed", null));
+        }
     }
 
     @PostMapping("/refreshToken")
@@ -111,7 +116,7 @@ public class UserController {
                             .refreshToken(refreshTokenRequest.getRefreshToken())
                             .build();
                     return ResponseEntity.status(HttpStatus.OK).body(ResponseBuilder.success(HttpStatus.OK.value(), "JWT token generated successfully", jwtResponseDTO));
-                }).orElseThrow(() -> new RuntimeException(
-                        "Refresh token is not in database!"));
+                }).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(ResponseBuilder.error(HttpStatus.UNAUTHORIZED.value(), "Invalid refresh token", null)));
     }
 }

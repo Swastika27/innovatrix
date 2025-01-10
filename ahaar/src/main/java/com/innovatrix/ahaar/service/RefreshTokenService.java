@@ -13,15 +13,18 @@ import java.util.UUID;
 
 @Service
 public class RefreshTokenService {
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
-    @Autowired
-    private UserRepository userRepository;
-
+    public RefreshTokenService(
+            RefreshTokenRepository refreshTokenRepository,
+            UserRepository userRepository,
+            UserService userService) {
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.userRepository = userRepository;
+    }
     private static final long TIMEOUT = 1000 * 60 * 5; // 5 minute
-    @Autowired
-    private UserService userService;
 
     public RefreshToken createRefreshToken(String username) {
         Optional<ApplicationUser> user = userRepository.findByUserName(username);
@@ -39,7 +42,7 @@ public class RefreshTokenService {
             refreshTokenRepository.delete(previousToken.get());
         }
         RefreshToken refreshToken = RefreshToken.builder()
-                .user(userRepository.findByUserName(username).get())
+                .user(user.get())
                 .token(UUID.randomUUID().toString())
                 .expiryDate(Instant.now().plusMillis(TIMEOUT))
                 .build();
