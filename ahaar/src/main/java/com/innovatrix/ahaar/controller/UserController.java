@@ -105,7 +105,7 @@ public class UserController {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(userInfo -> {
-                    String accessToken = jwtService.generateToken(userInfo.toDTO().getUserName());
+                    String accessToken = jwtService.generateToken(userInfo.getUserName());
                     JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
                             .accessToken(accessToken)
                             .refreshToken(refreshTokenRequest.getRefreshToken())
