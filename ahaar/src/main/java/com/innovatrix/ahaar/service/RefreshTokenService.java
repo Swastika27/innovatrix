@@ -1,5 +1,6 @@
 package com.innovatrix.ahaar.service;
 
+import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.RefreshToken;
 import com.innovatrix.ahaar.repository.RefreshTokenRepository;
 import com.innovatrix.ahaar.repository.UserRepository;
@@ -19,8 +20,24 @@ public class RefreshTokenService {
     private UserRepository userRepository;
 
     private final long timeout = 1000 * 60 * 5; // 5 minute
+    @Autowired
+    private UserService userService;
 
     public RefreshToken createRefreshToken(String username) {
+        Optional<ApplicationUser> user = userRepository.findByUserName(username);
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        Optional<RefreshToken> previousToken = refreshTokenRepository.findByUser(user.get());
+
+        if(previousToken.isPresent() && previousToken.get().getExpiryDate().isAfter(Instant.now())) {
+            return previousToken.get();
+        }
+
+        if(previousToken.isPresent() && previousToken.get().getExpiryDate().isBefore(Instant.now())) {
+            refreshTokenRepository.delete(previousToken.get());
+        }
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(userRepository.findByUserName(username).get())
                 .token(UUID.randomUUID().toString())
