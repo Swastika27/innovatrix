@@ -1,5 +1,6 @@
 package com.innovatrix.ahaar.controller;
 
+import com.innovatrix.ahaar.exception.NoDataFoundException;
 import com.innovatrix.ahaar.model.APIResponse;
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.ApplicationUserDTO;
@@ -33,8 +34,7 @@ public class UserController {
         Page<ApplicationUser> allUsers =  userService.getUsers(page, size);
 
         if(allUsers.isEmpty()) {
-            return ResponseEntity.status(404)
-                    .body(ResponseBuilder.error(HttpStatus.NOT_FOUND.value(), "No user to retrieve", allUsers));
+            throw new NoDataFoundException("No user to retrieve");
         }
 
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "User retrieved successfully", allUsers));
@@ -45,11 +45,15 @@ public class UserController {
         Optional<ApplicationUser> user = userService.getUserById(id);
 
         if(user.isEmpty()) {
-            return ResponseEntity.status(404)
-                    .body(ResponseBuilder.error(HttpStatus.NOT_FOUND.value(), "User not found", null));
+            throw new NoDataFoundException("User of this id does not exist in Database.");
         }
 
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "User retrieved successfully", user));
+    }
+
+    @GetMapping("/test-exception")
+    public void testException() {
+        throw new NoDataFoundException("This is a test exception");
     }
 
     @PostMapping("/add")
