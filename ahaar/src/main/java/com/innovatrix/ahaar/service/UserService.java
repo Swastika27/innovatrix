@@ -105,14 +105,12 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public String login(LoginDTO loginDTO) {
-        System.out.println("inside login");
         Authentication authentication = authenticationManager
                         .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
         if(authentication.isAuthenticated()) {
-            System.out.println("Authentication Success");
             return jwtService.generateToken(loginDTO.getUsername());
         }
-        System.out.println("Authentication Failed");
-        return "Failure";
+        throw new IllegalStateException("Authentication failed");
     }
+
 }
