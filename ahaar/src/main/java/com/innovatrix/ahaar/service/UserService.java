@@ -19,19 +19,23 @@ import java.util.Optional;
 
 @Service
 public class UserService implements UserServiceInterface {
+
     private UserRepository userRepository;
 
-    @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
     private JWTService jwtService;
 
-    public UserService(UserRepository userRepository) {
+    private RedisService redisService;
+
+    public UserService(UserRepository userRepository, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, JWTService jwtService, RedisService redisService) {
         this.userRepository = userRepository;
+        this.authenticationManager = authenticationManager;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.jwtService = jwtService;
+        this.redisService = redisService;
     }
 
     public Page<ApplicationUser> getUsers(int page, int size) {
@@ -96,7 +100,7 @@ public class UserService implements UserServiceInterface {
     }
 
     public Optional<ApplicationUser> getUserById(Long id) {
-        String redisKey = REDIS_PREFIX + id;
+        String redisKey = RedisService.REDIS_PREFIX + id;
 
         // Check if the user is in Redis cache
         ApplicationUser cachedUser = redisService.get(redisKey, ApplicationUser.class);

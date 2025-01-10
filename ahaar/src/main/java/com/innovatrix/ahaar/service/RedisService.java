@@ -11,6 +11,8 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class RedisService {
 
+    public static final String REDIS_PREFIX = "USER:";
+
     @Autowired
     private RedisTemplate redisTemplate;
 
