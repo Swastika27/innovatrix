@@ -81,7 +81,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ResponseBuilder.success(HttpStatus.OK.value(), "User created successfully", newUser));
     }
-    
+
     /**
      +     * Authenticates user credentials and generates JWT token
      +     * @param loginDTO Contains user login credentials
