@@ -1,14 +1,12 @@
 package com.innovatrix.ahaar.model;
 
-import com.innovatrix.ahaar.DTO.ApplicationUserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

@@ -96,13 +96,24 @@ public class UserService implements UserServiceInterface {
     }
 
     public Optional<ApplicationUser> getUserById(Long id) {
-        Optional<ApplicationUser> userOptional = userRepository.findById(id);
-        if (userOptional.isEmpty()) {
-            throw new IllegalStateException("User with this id does not exist");
-        }
-        return userOptional;
-    }
+        String redisKey = REDIS_PREFIX + id;
 
+        // Check if the user is in Redis cache
+        ApplicationUser cachedUser = redisService.get(redisKey, ApplicationUser.class);
+
+        if (cachedUser != null) {
+            // Return user from Redis cache
+            return Optional.of(cachedUser);
+        } else {
+            Optional<ApplicationUser> userOptional = userRepository.findById(id);
+            if (userOptional.isEmpty()) {
+                throw new IllegalStateException("User with this id does not exist");
+            }
+            redisService.set(redisKey, userOptional.get(), 1);
+            return userOptional;
+
+        }
+    }
     @Override
     public String login(LoginDTO loginDTO) {
         Authentication authentication = authenticationManager

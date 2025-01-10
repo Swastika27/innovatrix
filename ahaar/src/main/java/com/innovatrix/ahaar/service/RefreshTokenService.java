@@ -19,7 +19,7 @@ public class RefreshTokenService {
     @Autowired
     private UserRepository userRepository;
 
-    private final long timeout = 1000 * 60 * 5; // 5 minute
+    private static final long TIMEOUT = 1000 * 60 * 5; // 5 minute
     @Autowired
     private UserService userService;
 
@@ -41,7 +41,7 @@ public class RefreshTokenService {
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(userRepository.findByUserName(username).get())
                 .token(UUID.randomUUID().toString())
-                .expiryDate(Instant.now().plusMillis(timeout))//10
+                .expiryDate(Instant.now().plusMillis(TIMEOUT))
                 .build();
         return refreshTokenRepository.save(refreshToken);
     }

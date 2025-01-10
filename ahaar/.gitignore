@@ -34,3 +34,21 @@ build/
 
 ### environment ###
 .env
+
+### .idea ###
+# Exclude user-specific files
+.idea/workspace.xml
+.idea/dictionaries/
+.idea/vcs.xml
+
+# Exclude temporary files and logs
+.idea/.name
+.idea/encodings.xml
+
+# Include shareable project settings
+!.idea/modules.xml
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+!.idea/libraries/
+!.idea/runConfigurations/
+

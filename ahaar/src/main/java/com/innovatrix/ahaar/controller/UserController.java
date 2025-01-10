@@ -16,9 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -38,7 +35,7 @@ public class UserController {
         this.jwtService = jwtService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/all")
     public ResponseEntity<APIResponse<Page<ApplicationUser>>> getUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -102,7 +99,7 @@ public class UserController {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(userInfo -> {
-                    String accessToken = jwtService.generateToken(userInfo.getUserName());
+                    String accessToken = jwtService.generateToken(userInfo.toDTO().getUserName());
                     JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
                             .accessToken(accessToken)
                             .token(refreshTokenRequest.getToken())
