@@ -66,7 +66,7 @@ public class UserService implements UserServiceInterface {
         if (userOptional.isPresent()) {
             throw new IllegalStateException("User with this email already exists");
         }
-        checkConditions(user);
+//        checkConditions(user);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         return Optional.of(userRepository.save(user.toEntity()));
     }
@@ -83,7 +83,7 @@ public class UserService implements UserServiceInterface {
             );
         }
 
-        checkConditions(user);
+//        checkConditions(user);
         userOptional.get().setUserName(user.getUserName());
         userOptional.get().setEmail(user.getEmail());
         userOptional.get().setPassword(bCryptPasswordEncoder.encode(user.getPassword()));

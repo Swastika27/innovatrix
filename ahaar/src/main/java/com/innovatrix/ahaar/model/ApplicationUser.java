@@ -1,6 +1,7 @@
 package com.innovatrix.ahaar.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.innovatrix.ahaar.DTO.ApplicationUserDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
