@@ -4,17 +4,25 @@ import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.ApplicationUserDTO;
 import com.innovatrix.ahaar.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class
 UserService implements UserServiceInterface {
     UserRepository userRepository;
+
+    @Autowired
+    private RedisService redisService;
+
+    private static final String REDIS_PREFIX = "USER:";
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -82,11 +90,28 @@ UserService implements UserServiceInterface {
         userRepository.deleteById(id);
     }
 
+
+
     public Optional<ApplicationUser> getUserById(Long id) {
-        Optional<ApplicationUser> userOptional = userRepository.findById(id);
-        if (userOptional.isEmpty()) {
-            throw new IllegalStateException("User with this id does not exist");
+        String redisKey = REDIS_PREFIX + id;
+
+        // Check if the user is in Redis cache
+        ApplicationUser cachedUser = redisService.get(redisKey,ApplicationUser.class);
+
+        if (cachedUser != null) {
+            // Return user from Redis cache
+            return Optional.of(cachedUser);
         }
-        return userOptional;
+        else{
+            Optional<ApplicationUser> userOptional = userRepository.findById(id);
+            if (userOptional.isEmpty()) {
+                throw new IllegalStateException("User with this id does not exist");
+            }
+            redisService.set(redisKey, userOptional.get(), 1);
+            return userOptional;
+
+        }
+
+
     }
 }
