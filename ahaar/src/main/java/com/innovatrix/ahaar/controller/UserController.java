@@ -81,7 +81,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ResponseBuilder.success(HttpStatus.OK.value(), "User created successfully", newUser));
     }
-
+    
+    /**
+     +     * Authenticates user credentials and generates JWT token
+     +     * @param loginDTO Contains user login credentials
+     +     * @return JWT token string upon successful authentication
+     +     * @throws AuthenticationException If credentials are invalid
+     +     */
     @PostMapping("/login")
     public ResponseEntity<APIResponse<JwtResponseDTO>> authenticateAndGetToken(@RequestBody LoginDTO loginDTO) {
         String jwtToken = userService.login(loginDTO);
