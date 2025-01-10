@@ -18,20 +18,5 @@ public class AhaarApplication {
 		SpringApplication.run(AhaarApplication.class, args);
 	}
 
-	@Bean
-	CommandLineRunner runner(UserRepository userRepository) {
-		return args -> {
-			ApplicationUser applicationUser1 = new ApplicationUser("SwastikaPandit",
-					"swastikapandit@gmail.com",
-					"abcdef");
-			ApplicationUser applicationUser2 = new ApplicationUser("FairuzMubashwera",
-					"fairuz@gmail.com",
-					"12345");
-			ApplicationUser applicationUser3 = new ApplicationUser("MetalyKhatun",
-					"metaly@gmail.com",
-					"12345");
 
-			userRepository.saveAll(List.of(applicationUser1, applicationUser2, applicationUser3));
-		};
-	}
 }

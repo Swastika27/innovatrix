@@ -2,6 +2,7 @@ package com.innovatrix.ahaar.service;
 
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.ApplicationUserDTO;
+import com.innovatrix.ahaar.model.LoginDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -17,5 +18,7 @@ public interface UserServiceInterface {
     void deleteUser(Long id);
 
     Optional<ApplicationUser> getUserById(Long id);
+
+    String login(LoginDTO loginDTO);
 }
 

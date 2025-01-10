@@ -2,18 +2,34 @@ package com.innovatrix.ahaar.service;
 
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.ApplicationUserDTO;
+import com.innovatrix.ahaar.model.LoginDTO;
 import com.innovatrix.ahaar.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class UserService implements UserServiceInterface {
-    UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private JWTService jwtService;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -48,8 +64,8 @@ public class UserService implements UserServiceInterface {
             throw new IllegalStateException("User with this email already exists");
         }
         checkConditions(user);
-        userRepository.save(user.toEntity());
-        return userRepository.findByEmail(user.getEmail());
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        return Optional.of(userRepository.save(user.toEntity()));
     }
 
     @Transactional
@@ -67,10 +83,9 @@ public class UserService implements UserServiceInterface {
         checkConditions(user);
         userOptional.get().setUserName(user.getUserName());
         userOptional.get().setEmail(user.getEmail());
-        userOptional.get().setPassword(user.getPassword());
+        userOptional.get().setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
 
-        userRepository.save(userOptional.get());
-        return userOptional.get();
+        return userRepository.save(userOptional.get());
     }
 
     public void deleteUser(Long id) {
@@ -87,5 +102,18 @@ public class UserService implements UserServiceInterface {
             throw new IllegalStateException("User with this id does not exist");
         }
         return userOptional;
+    }
+
+    @Override
+    public String login(LoginDTO loginDTO) {
+        System.out.println("inside login");
+        Authentication authentication = authenticationManager
+                        .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
+        if(authentication.isAuthenticated()) {
+            System.out.println("Authentication Success");
+            return jwtService.generateToken(loginDTO.getUsername());
+        }
+        System.out.println("Authentication Failed");
+        return "Failure";
     }
 }

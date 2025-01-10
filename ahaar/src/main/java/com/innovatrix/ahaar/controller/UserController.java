@@ -3,6 +3,7 @@ package com.innovatrix.ahaar.controller;
 import com.innovatrix.ahaar.model.APIResponse;
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.ApplicationUserDTO;
+import com.innovatrix.ahaar.model.LoginDTO;
 import com.innovatrix.ahaar.service.UserService;
 import com.innovatrix.ahaar.service.UserServiceInterface;
 import com.innovatrix.ahaar.util.ResponseBuilder;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController()
-@RequestMapping()
+@RequestMapping("/user")
 public class UserController {
 
     UserServiceInterface userService;
@@ -26,7 +27,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<APIResponse<Page<ApplicationUser>>> getUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -52,18 +53,24 @@ public class UserController {
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "User retrieved successfully", user));
     }
 
-    @PostMapping
+    @PostMapping("/signup")
     public ResponseEntity<APIResponse<Optional<ApplicationUser>>> addUser(@RequestBody ApplicationUserDTO userDTO) {
         Optional<ApplicationUser> newUser = userService.addUser(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ResponseBuilder.success(HttpStatus.OK.value(), "User created successfully", newUser));
     }
 
+    @PostMapping("/login")
+    public String login(@RequestBody LoginDTO loginDTO) {
+        System.out.println(loginDTO);
+        return userService.login(loginDTO);
+    }
+
     @PutMapping(path = "{user_id}")
-    public ResponseEntity<APIResponse<ApplicationUserDTO>> updateUser(@PathVariable("user_id") Long userId,
+    public ResponseEntity<APIResponse<ApplicationUser>> updateUser(@PathVariable("user_id") Long userId,
                            @RequestBody ApplicationUserDTO userDTO) {
-        userService.updateUser(userId, userDTO);
-        return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(),"User updated successfully", userDTO));
+
+        return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(),"User updated successfully", userService.updateUser(userId, userDTO)));
     }
 
     @DeleteMapping(path = "{user_id}")
