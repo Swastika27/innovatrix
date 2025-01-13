@@ -51,26 +51,22 @@ public class UserController {
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "User retrieved successfully", user));
     }
 
-    @GetMapping("/test-exception")
-    public void testException() {
-        throw new NoDataFoundException("This is a test exception");
-    }
 
-    @PostMapping("/add")
+    @PostMapping("/")
     public ResponseEntity<APIResponse<Optional<ApplicationUser>>> addUser(@RequestBody ApplicationUserDTO userDTO) {
         Optional<ApplicationUser> newUser = userService.addUser(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ResponseBuilder.success(HttpStatus.OK.value(), "User created successfully", newUser));
     }
 
-    @PutMapping(path = "/update/{user_id}")
+    @PutMapping(path = "/{user_id}")
     public ResponseEntity<APIResponse<ApplicationUserDTO>> updateUser(@PathVariable("user_id") Long userId,
                            @RequestBody ApplicationUserDTO userDTO) {
         userService.updateUser(userId, userDTO);
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(),"User updated successfully", userDTO));
     }
 
-    @DeleteMapping(path = "/delete/{user_id}")
+    @DeleteMapping(path = "/{user_id}")
     public ResponseEntity<APIResponse<ApplicationUserDTO>> deleteUser(@PathVariable("user_id") Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(),"User deleted successfully", null));
