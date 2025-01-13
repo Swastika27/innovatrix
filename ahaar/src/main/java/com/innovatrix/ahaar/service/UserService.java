@@ -1,5 +1,6 @@
 package com.innovatrix.ahaar.service;
 
+import com.innovatrix.ahaar.exception.NoDataFoundException;
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.ApplicationUserDTO;
 import com.innovatrix.ahaar.repository.UserRepository;
@@ -105,7 +106,7 @@ UserService implements UserServiceInterface {
         else{
             Optional<ApplicationUser> userOptional = userRepository.findById(id);
             if (userOptional.isEmpty()) {
-                throw new IllegalStateException("User with this id does not exist");
+                throw new NoDataFoundException("User of this id does not exist in Database.");
             }
             redisService.set(redisKey, userOptional.get(), 1);
             return userOptional;

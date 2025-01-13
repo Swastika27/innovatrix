@@ -43,11 +43,6 @@ public class UserController {
     @GetMapping(path = "/{user_id}")
     public ResponseEntity<APIResponse<Optional<ApplicationUser>>> getUserById(@PathVariable("user_id") Long id) {
         Optional<ApplicationUser> user = userService.getUserById(id);
-
-        if(user.isEmpty()) {
-            throw new NoDataFoundException("User of this id does not exist in Database.");
-        }
-
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "User retrieved successfully", user));
     }
 
