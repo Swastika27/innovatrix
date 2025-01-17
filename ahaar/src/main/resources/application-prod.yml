@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: ahaar
+
+  datasource:
+    url: ${env.PROD_DB_URL}
+    username: ${env.PROD_DB_USER}
+    password: ${env.PROD_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+
+  data:
+    redis:
+      host: ${env.PROD_REDIS_HOST}
+      port: ${env.PROD_REDIS_PORT}
