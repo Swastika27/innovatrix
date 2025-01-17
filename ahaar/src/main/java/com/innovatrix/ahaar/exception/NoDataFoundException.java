@@ -1,6 +1,9 @@
 package com.innovatrix.ahaar.exception;
 
 
+import lombok.Getter;
+
+@Getter
 public class NoDataFoundException extends RuntimeException {
     private String message;
 
@@ -10,7 +13,4 @@ public class NoDataFoundException extends RuntimeException {
         this.message = msg;
     }
 
-    public String getMessage() {
-        return message;
-    }
 }

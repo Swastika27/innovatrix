@@ -29,7 +29,6 @@ public class ApplicationUserDetailsService implements UserDetailsService {
             System.out.println(username + " not found");
             throw new UsernameNotFoundException(username + " not found");
         }
-        System.out.println(user.toString());
         return new ApplicationUserDetails(user.get());
     }
 }

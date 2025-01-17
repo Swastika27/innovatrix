@@ -1,11 +1,11 @@
 package com.innovatrix.ahaar.service;
 
+import com.innovatrix.ahaar.exception.UserNotFoundException;
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.DTO.ApplicationUserDTO;
 import com.innovatrix.ahaar.DTO.LoginDTO;
 import com.innovatrix.ahaar.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -75,10 +75,10 @@ public class UserService implements UserServiceInterface {
     public ApplicationUser updateUser(Long userId, ApplicationUserDTO user) {
         Optional<ApplicationUser> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
-            throw new IllegalStateException("User with this id does not exist");
+            throw new UserNotFoundException(userId);
         }
         if(user.getEmail().isEmpty() || user.getPassword().isEmpty() || user.getUserName().isEmpty()) {
-            throw new IllegalStateException(
+            throw new IllegalArgumentException(
                     "Required fields are missing in update operation"
             );
         }
@@ -94,26 +94,34 @@ public class UserService implements UserServiceInterface {
     public void deleteUser(Long id) {
         Optional<ApplicationUser> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
-            throw new IllegalStateException("User with this id does not exist");
+            throw new UserNotFoundException(id);
         }
         userRepository.deleteById(id);
     }
 
     public Optional<ApplicationUser> getUserById(Long id) {
-        String redisKey = RedisService.REDIS_PREFIX + id;
 
-        // Check if the user is in Redis cache
-        ApplicationUser cachedUser = redisService.get(redisKey, ApplicationUser.class);
+        try {
+            String redisKey = RedisService.REDIS_PREFIX + id;
+            // Check if the user is in Redis cache
+            ApplicationUser cachedUser = redisService.get(redisKey, ApplicationUser.class);
 
-        if (cachedUser != null) {
-            // Return user from Redis cache
-            return Optional.of(cachedUser);
-        } else {
+            if (cachedUser != null) {
+                // Return user from Redis cache
+                return Optional.of(cachedUser);
+            } else {
+                throw new UserNotFoundException(id);
+            }
+        } catch (Exception e) {
             Optional<ApplicationUser> userOptional = userRepository.findById(id);
             if (userOptional.isEmpty()) {
-                throw new IllegalStateException("User with this id does not exist");
+                throw new UserNotFoundException(id);
             }
-            redisService.set(redisKey, userOptional.get(), 1);
+            try {
+                redisService.set(RedisService.REDIS_PREFIX + id, userOptional.get(), 1);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             return userOptional;
         }
     }

@@ -25,7 +25,7 @@ public class RefreshToken {
 
     private Instant expiryDate;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private ApplicationUser user;
 
