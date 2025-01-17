@@ -50,6 +50,10 @@ public class ApplicationUser extends Auditable<String> implements Serializable {
 	@JsonIgnore
 	private String password;
 
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private Role role;
+
 	public ApplicationUser(String userName, String email, String password) {
 		this.userName = userName;
 		this.email = email;
