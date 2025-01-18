@@ -2,7 +2,6 @@ package com.innovatrix.ahaar.model;
 
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -12,7 +11,6 @@ import java.util.Date;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
