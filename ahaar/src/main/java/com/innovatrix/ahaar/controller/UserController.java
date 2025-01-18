@@ -46,7 +46,7 @@ public class UserController {
     public ResponseEntity<APIResponse<Page<ApplicationUser>>> getUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Page<ApplicationUser> allUsers =  userService.getUsers(page, size);
+        Page<ApplicationUser> allUsers =  userService.getAll(page, size);
 
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "User retrieved successfully", allUsers));
     }

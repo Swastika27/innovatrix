@@ -38,7 +38,7 @@ public class UserService implements UserServiceInterface {
         this.redisService = redisService;
     }
 
-    public Page<ApplicationUser> getUsers(int page, int size) {
+    public Page<ApplicationUser> getAll(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return userRepository.findAll(pageable);
     }

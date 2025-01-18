@@ -2,7 +2,6 @@ package com.innovatrix.ahaar.config;
 
 
 import com.innovatrix.ahaar.service.ApplicationUserDetailsService;
-import com.innovatrix.ahaar.service.JWTService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +15,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -48,9 +46,9 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/user/login",
-                                "/user/signup",
-                                "/user/refreshToken",
+                        .requestMatchers("/**/login",
+                                "/**/signup",
+                                "/**/refreshToken",
                                 "/swagger-ui.html",
                                 "/swagger-ui/index.html",
                                 "/v3/api-docs").permitAll()
