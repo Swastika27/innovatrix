@@ -46,12 +46,15 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**/login",
-                                "/**/signup",
-                                "/**/refreshToken",
+                        .requestMatchers("/ahaar/customer/login",
+                                "/ahaar/customer/signup",
+                                "/ahaar/customer/refreshToken",
+                                "/ahaar/restaurant-owner/login",
+                                "/ahaar/restaurant-owner/signup",
+                                "/ahaar/restaurant-owner/refreshToken",
                                 "/swagger-ui.html",
-                                "/swagger-ui/index.html",
-                                "/v3/api-docs").permitAll()
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
