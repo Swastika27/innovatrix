@@ -64,7 +64,7 @@ public class CustomerController {
             throw new BindException(bindingResult);
         }
 
-        Optional<Customer> newCustomer = customerService.addUser(customer);
+        Optional<Customer> newCustomer = customerService.add(customer);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseBuilder.success(HttpStatus.CREATED.value(), "Customer added successfully", newCustomer));
 
     }

@@ -1,7 +1,7 @@
 package com.innovatrix.ahaar.model;
 
 
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,12 +9,19 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Customer extends ApplicationUser {
+public class Customer  {
+    @Id
+    private Long id;
+
+    @MapsId
+    @OneToOne
+    @JoinColumn(name = "id")
+    private ApplicationUser user;
+
     private Date dateOfBirth;
     private String name;
     private String currentAddress;

@@ -1,19 +1,25 @@
 package com.innovatrix.ahaar.model;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RestaurantOwner extends ApplicationUser {
+public class RestaurantOwner {
+    @Id
+    private Long id;
+
+    @MapsId
+    @OneToOne
+    @JoinColumn(name = "id")
+    private ApplicationUser user;
+
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
