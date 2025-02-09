@@ -47,14 +47,14 @@ public class CustomerService {
         return customerRepository.findAll(pageable);
     }
 
-    public Optional<Customer> addUser(Customer user) {
-        Optional<Customer> userOptional = customerRepository.findByEmail(user.getEmail());
-        if (userOptional.isPresent()) {
+    public Optional<Customer> add(Customer customer) {
+        Optional<Customer> customerOptional = customerRepository.findByEmail(customer.getEmail());
+        if (customerOptional.isPresent()) {
             throw new IllegalStateException("Customer with this email already exists");
         }
 //        checkConditions(user);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
-        return Optional.of(customerRepository.save(user));
+        customer.getUser().setPassword(bCryptPasswordEncoder.encode(customer.getUser().getPassword()));
+        return Optional.of(customerRepository.save(customer));
     }
 
     @Transactional
@@ -63,15 +63,15 @@ public class CustomerService {
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException(userId);
         }
-        if(user.getEmail().isEmpty() || user.getPassword().isEmpty() || user.getUserName().isEmpty()) {
+        if (user.getEmail().isEmpty() || user.getUser().getPassword().isEmpty() || user.getUser().getUserName().isEmpty()) {
             throw new IllegalArgumentException(
                     "Required fields are missing in update operation"
             );
         }
 
-        userOptional.get().setUserName(user.getUserName());
+        userOptional.get().getUser().setUserName(user.getUser().getUserName());
         userOptional.get().setEmail(user.getEmail());
-        userOptional.get().setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userOptional.get().getUser().setPassword(bCryptPasswordEncoder.encode(user.getUser().getPassword()));
         userOptional.get().setCurrentAddress(user.getCurrentAddress());
         userOptional.get().setGender(user.getGender());
         userOptional.get().setName(user.getName());
@@ -124,7 +124,7 @@ public class CustomerService {
     public String login(LoginDTO loginDTO) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword()));
-        if(authentication.isAuthenticated()) {
+        if (authentication.isAuthenticated()) {
             return jwtService.generateToken(loginDTO.getUsername());
         }
         throw new IllegalStateException("Authentication failed");
@@ -140,7 +140,7 @@ public class CustomerService {
                             .accessToken(accessToken)
                             .refreshToken(token)
                             .build();
-return jwtResponseDTO;
+                    return jwtResponseDTO;
                 }).orElseGet(() -> null);
 
     }
