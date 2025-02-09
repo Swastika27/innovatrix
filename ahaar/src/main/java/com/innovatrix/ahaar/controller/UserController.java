@@ -57,6 +57,7 @@ public class UserController {
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "User retrieved successfully", user));
     }
 
+
     @PutMapping(path = "{user_id}")
     public ResponseEntity<APIResponse<ApplicationUserDTO>> updateUser(@PathVariable("user_id") Long userId,
                            @Valid @RequestBody ApplicationUserDTO userDTO) {
@@ -76,10 +77,12 @@ public class UserController {
         if(bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
+
         Optional<ApplicationUser> newUser = userService.addUser(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ResponseBuilder.success(HttpStatus.CREATED.value(), "User created successfully", newUser));
     }
+
 
     /**
      +     * Authenticates user credentials and generates JWT token
@@ -118,5 +121,6 @@ public class UserController {
                     return ResponseEntity.status(HttpStatus.OK).body(ResponseBuilder.success(HttpStatus.OK.value(), "JWT token generated successfully", jwtResponseDTO));
                 }).orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body(ResponseBuilder.error(HttpStatus.UNAUTHORIZED.value(), "Invalid refresh token", null)));
+
     }
 }
