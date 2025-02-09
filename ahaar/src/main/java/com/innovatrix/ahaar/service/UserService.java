@@ -1,6 +1,7 @@
 package com.innovatrix.ahaar.service;
 
 import com.innovatrix.ahaar.exception.UserNotFoundException;
+
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.DTO.ApplicationUserDTO;
 import com.innovatrix.ahaar.DTO.LoginDTO;
@@ -115,6 +116,7 @@ public class UserService implements UserServiceInterface {
         } catch (Exception e) {
             Optional<ApplicationUser> userOptional = userRepository.findById(id);
             if (userOptional.isEmpty()) {
+
                 throw new UserNotFoundException(id);
             }
             try {
