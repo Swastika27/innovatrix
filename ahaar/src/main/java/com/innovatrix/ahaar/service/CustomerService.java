@@ -1,11 +1,15 @@
 package com.innovatrix.ahaar.service;
 
+import com.innovatrix.ahaar.DTO.CustomerDTO;
 import com.innovatrix.ahaar.DTO.JwtResponseDTO;
 import com.innovatrix.ahaar.DTO.LoginDTO;
 import com.innovatrix.ahaar.exception.UserNotFoundException;
+import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.Customer;
 import com.innovatrix.ahaar.model.RefreshToken;
+import com.innovatrix.ahaar.model.Role;
 import com.innovatrix.ahaar.repository.CustomerRepository;
+import com.innovatrix.ahaar.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +26,7 @@ import java.util.Optional;
 @Service
 public class CustomerService {
     private final RefreshTokenService refreshTokenService;
+    private final UserRepository userRepository;
     private CustomerRepository customerRepository;
     private AuthenticationManager authenticationManager;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -29,13 +34,14 @@ public class CustomerService {
     private RedisService redisService;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, JWTService jwtService, RedisService redisService, RefreshTokenService refreshTokenService) {
+    public CustomerService(CustomerRepository customerRepository, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, JWTService jwtService, RedisService redisService, RefreshTokenService refreshTokenService, UserRepository userRepository) {
         this.customerRepository = customerRepository;
         this.authenticationManager = authenticationManager;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtService = jwtService;
         this.redisService = redisService;
         this.refreshTokenService = refreshTokenService;
+        this.userRepository = userRepository;
     }
 
     public Page<Customer> getAll(int page, int size) {
@@ -43,43 +49,46 @@ public class CustomerService {
         return customerRepository.findAll(pageable);
     }
 
-    public Optional<Customer> add(Customer customer) {
-        Optional<Customer> customerOptional = customerRepository.findByEmail(customer.getEmail());
-        if (customerOptional.isPresent()) {
+    public Optional<Customer> add(CustomerDTO customerDTO) {
+        Optional<ApplicationUser> userOptional = userRepository.findByEmail(customerDTO.getEmail());
+        if (userOptional.isPresent()) {
             throw new IllegalStateException("Customer with this email already exists");
         }
 //        checkConditions(user);
+        Customer customer = Customer.builder().user(new ApplicationUser(customerDTO.getUserName(), customerDTO.getEmail(), bCryptPasswordEncoder.encode(customerDTO.getPassword()), Role.CUSTOMER))
+                        .dateOfBirth(customerDTO.getDateOfBirth())
+                                .currentWorkPlace(customerDTO.getCurrentWorkPlace())
+                                        .currentAddress(customerDTO.getCurrentAddress())
+                                                .name(customerDTO.getName())
+                                                        .gender(customerDTO.getGender())
+                                                                .homeTown(customerDTO.getHomeTown())
+                                                                        .educationalInstitution(customerDTO.getEducationalInstitution())
+                                                                                .phoneNumber(customerDTO.getPhoneNumber()).build();
         customer.getUser().setPassword(bCryptPasswordEncoder.encode(customer.getUser().getPassword()));
         return Optional.of(customerRepository.save(customer));
     }
 
     @Transactional
     public Customer updateInfo(Long userId, Customer user) {
-        Optional<Customer> userOptional = customerRepository.findById(userId);
-        if (userOptional.isEmpty()) {
+        Optional<Customer> customerOptional = customerRepository.findById(userId);
+        if (customerOptional.isEmpty()) {
             throw new UserNotFoundException(userId);
         }
-        if (user.getEmail().isEmpty() || user.getUser().getPassword().isEmpty() || user.getUser().getUserName().isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Required fields are missing in update operation"
-            );
-        }
 
-        userOptional.get().getUser().setUserName(user.getUser().getUserName());
-        userOptional.get().setEmail(user.getEmail());
-        userOptional.get().getUser().setPassword(bCryptPasswordEncoder.encode(user.getUser().getPassword()));
-        userOptional.get().setCurrentAddress(user.getCurrentAddress());
-        userOptional.get().setGender(user.getGender());
-        userOptional.get().setName(user.getName());
-        userOptional.get().setPhoneNumber(user.getPhoneNumber());
-        userOptional.get().setCurrentWorkPlace(user.getCurrentWorkPlace());
-        userOptional.get().setDateOfBirth(user.getDateOfBirth());
-        userOptional.get().setEducationalInstitution(user.getEducationalInstitution());
-        userOptional.get().setHomeTown(user.getHomeTown());
-        userOptional.get().setEmail(user.getEmail());
-        userOptional.get().setPhoneNumber(user.getPhoneNumber());
+        customerOptional.get().getUser().setUserName(user.getUser().getUserName());
+        customerOptional.get().getUser().setEmail(user.getUser().getEmail());
+        customerOptional.get().getUser().setPassword(bCryptPasswordEncoder.encode(user.getUser().getPassword()));
+        customerOptional.get().setCurrentAddress(user.getCurrentAddress());
+        customerOptional.get().setGender(user.getGender());
+        customerOptional.get().setName(user.getName());
+        customerOptional.get().setPhoneNumber(user.getPhoneNumber());
+        customerOptional.get().setCurrentWorkPlace(user.getCurrentWorkPlace());
+        customerOptional.get().setDateOfBirth(user.getDateOfBirth());
+        customerOptional.get().setEducationalInstitution(user.getEducationalInstitution());
+        customerOptional.get().setHomeTown(user.getHomeTown());
+        customerOptional.get().setPhoneNumber(user.getPhoneNumber());
 
-        return customerRepository.save(userOptional.get());
+        return customerRepository.save(customerOptional.get());
     }
 
     public void deleteUser(Long id) {

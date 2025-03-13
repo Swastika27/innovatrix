@@ -1,6 +1,7 @@
 package com.innovatrix.ahaar.controller;
 
 
+import com.innovatrix.ahaar.DTO.CustomerDTO;
 import com.innovatrix.ahaar.DTO.JwtResponseDTO;
 import com.innovatrix.ahaar.DTO.LoginDTO;
 import com.innovatrix.ahaar.DTO.RefreshTokenRequestDTO;
@@ -39,9 +40,9 @@ public class CustomerController {
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "Customer retrieved successfully", allUsers));
     }
 
-    @GetMapping(path = "{id}")
-    public ResponseEntity<APIResponse<Optional<Customer>>> getById(@PathVariable("id") Long customerId) {
-        Optional<Customer> customer = customerService.getUserById(customerId);
+    @GetMapping("{id}")
+    public ResponseEntity<APIResponse<Optional<Customer>>> getById(@PathVariable Long id) {
+        Optional<Customer> customer = customerService.getUserById(id);
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "Customer retrieved successfully", customer));
     }
 
@@ -59,12 +60,12 @@ public class CustomerController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<APIResponse<Optional<Customer>>> signUp(@Valid @RequestBody Customer customer, BindingResult bindingResult) throws BindException {
+    public ResponseEntity<APIResponse<Optional<Customer>>> signUp(@Valid @RequestBody CustomerDTO customerDTO, BindingResult bindingResult) throws BindException {
         if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
 
-        Optional<Customer> newCustomer = customerService.add(customer);
+        Optional<Customer> newCustomer = customerService.add(customerDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseBuilder.success(HttpStatus.CREATED.value(), "Customer added successfully", newCustomer));
 
     }
