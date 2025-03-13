@@ -2,17 +2,25 @@ package com.innovatrix.ahaar.model;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class RestaurantOwner {
     @Id
+    @SequenceGenerator(
+            name = "restaurant_owner_id_sequence",
+            sequenceName = "restaurant_owner_id_sequence",
+            initialValue = 1,
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "restaurant_owner_id_sequence"
+    )
     private Long id;
 
     @MapsId
@@ -27,4 +35,10 @@ public class RestaurantOwner {
     @Column(nullable = false)
     private String NID;
 
+    public RestaurantOwner(ApplicationUser applicationUser, @NotBlank(message = "Name is required") @Size(min = 4, message = "Name must be at least 4 characters") String name, @NotBlank(message = "Phone number is required") String phoneNumber, @NotBlank(message = "NID is required") String nid) {
+        this.user = applicationUser;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.NID = nid;
+    }
 }

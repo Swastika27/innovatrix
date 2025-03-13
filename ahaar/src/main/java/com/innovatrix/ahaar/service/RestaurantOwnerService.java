@@ -2,10 +2,12 @@ package com.innovatrix.ahaar.service;
 
 import com.innovatrix.ahaar.DTO.JwtResponseDTO;
 import com.innovatrix.ahaar.DTO.LoginDTO;
+import com.innovatrix.ahaar.DTO.RestaurantOwnerDTO;
 import com.innovatrix.ahaar.exception.UserNotFoundException;
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.RefreshToken;
 import com.innovatrix.ahaar.model.RestaurantOwner;
+import com.innovatrix.ahaar.model.Role;
 import com.innovatrix.ahaar.repository.RestaurantOwnerRepository;
 import com.innovatrix.ahaar.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -59,13 +61,14 @@ public class RestaurantOwnerService {
         );
     }
 
-    public RestaurantOwner add(RestaurantOwner restaurantOwner) {
-        Optional<ApplicationUser> user = userRepository.findByEmail(restaurantOwner.getUser().getEmail());
+    public RestaurantOwner add(RestaurantOwnerDTO restaurantOwnerDTO) {
+        Optional<ApplicationUser> user = userRepository.findByEmail(restaurantOwnerDTO.getEmail());
         if (user.isPresent()) {
             throw new IllegalStateException("This email is already in use");
         }
 
-        restaurantOwner.getUser().setPassword(bCryptPasswordEncoder.encode(restaurantOwner.getUser().getPassword()));
+        RestaurantOwner restaurantOwner = new RestaurantOwner(new ApplicationUser(restaurantOwnerDTO.getUserName(), restaurantOwnerDTO.getEmail(), bCryptPasswordEncoder.encode(restaurantOwnerDTO.getPassword()), Role.RESTAURANT_OWNER ),
+                restaurantOwnerDTO.getName(), restaurantOwnerDTO.getPhoneNumber(), restaurantOwnerDTO.getNID());
         return restaurantOwnerRepository.save(restaurantOwner);
     }
 

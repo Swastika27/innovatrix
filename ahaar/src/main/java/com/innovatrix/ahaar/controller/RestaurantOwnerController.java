@@ -3,6 +3,7 @@ package com.innovatrix.ahaar.controller;
 import com.innovatrix.ahaar.DTO.JwtResponseDTO;
 import com.innovatrix.ahaar.DTO.LoginDTO;
 import com.innovatrix.ahaar.DTO.RefreshTokenRequestDTO;
+import com.innovatrix.ahaar.DTO.RestaurantOwnerDTO;
 import com.innovatrix.ahaar.model.APIResponse;
 import com.innovatrix.ahaar.model.RefreshToken;
 import com.innovatrix.ahaar.model.RestaurantOwner;
@@ -65,12 +66,12 @@ public class RestaurantOwnerController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<APIResponse<RestaurantOwner>> signup(@Valid @RequestBody RestaurantOwner restaurantOwner, BindingResult bindingResult) throws BindException {
+    public ResponseEntity<APIResponse<RestaurantOwner>> signup(@Valid @RequestBody RestaurantOwnerDTO restaurantOwnerDTO, BindingResult bindingResult) throws BindException {
         if(bindingResult.hasErrors()){
             throw new BindException(bindingResult);
         }
 
-        RestaurantOwner newRestaurantOwner = restaurantOwnerService.add(restaurantOwner);
+        RestaurantOwner newRestaurantOwner = restaurantOwnerService.add(restaurantOwnerDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ResponseBuilder.success((HttpStatus.CREATED.value()), "Restaurant owner created successfully", newRestaurantOwner));
     }
