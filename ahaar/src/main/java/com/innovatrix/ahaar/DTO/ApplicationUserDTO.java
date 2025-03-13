@@ -2,6 +2,7 @@ package com.innovatrix.ahaar.DTO;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.innovatrix.ahaar.model.ApplicationUser;
+import com.innovatrix.ahaar.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,8 +32,12 @@ public class ApplicationUserDTO {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @NotBlank
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private Role role;
+
     public ApplicationUser toEntity () {
-        return new ApplicationUser(this.userName, this.email, this.password);
+        return new ApplicationUser(this.userName, this.email, this.password, this.role);
     }
 
 }

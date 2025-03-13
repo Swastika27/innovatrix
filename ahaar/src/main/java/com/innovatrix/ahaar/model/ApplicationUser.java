@@ -54,13 +54,14 @@ public class ApplicationUser extends Auditable<String> implements Serializable {
 	@Column(nullable = false)
 	private Role role;
 
-	public ApplicationUser(String userName, String email, String password) {
+	public ApplicationUser(String userName, String email, String password, Role role) {
 		this.userName = userName;
 		this.email = email;
 		this.password = password;
+		this.role = role;
 	}
 
 	public ApplicationUserDTO toDTO() {
-		return new ApplicationUserDTO(this.userName, this.email, this.password);
+		return new ApplicationUserDTO(this.userName, this.email, this.password, this.role);
 	}
 }
