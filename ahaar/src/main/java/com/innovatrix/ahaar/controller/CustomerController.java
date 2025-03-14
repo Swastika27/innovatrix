@@ -1,10 +1,10 @@
 package com.innovatrix.ahaar.controller;
 
 
-import com.innovatrix.ahaar.DTO.CustomerDTO;
-import com.innovatrix.ahaar.DTO.JwtResponseDTO;
-import com.innovatrix.ahaar.DTO.LoginDTO;
-import com.innovatrix.ahaar.DTO.RefreshTokenRequestDTO;
+import com.innovatrix.ahaar.dto.CustomerDTO;
+import com.innovatrix.ahaar.dto.JwtResponseDTO;
+import com.innovatrix.ahaar.dto.LoginDTO;
+import com.innovatrix.ahaar.dto.RefreshTokenRequestDTO;
 import com.innovatrix.ahaar.model.APIResponse;
 import com.innovatrix.ahaar.model.Customer;
 import com.innovatrix.ahaar.model.RefreshToken;
@@ -91,7 +91,7 @@ public class CustomerController {
         JwtResponseDTO jwtResponseDTO = customerService.refresh(refreshToken.getRefreshToken());
 
         if(jwtResponseDTO == null) {
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ResponseBuilder.error(HttpStatus.UNAUTHORIZED.value(), "Invalid refresh token", null));
         }
 

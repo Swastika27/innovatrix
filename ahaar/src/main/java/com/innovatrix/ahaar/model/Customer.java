@@ -15,7 +15,7 @@ import java.util.Date;
 public class Customer {
     @Id
     @SequenceGenerator(
-            name = "customer_id_sequence",public
+            name = "customer_id_sequence",
             sequenceName = "customer_id_sequence",
             initialValue = 1,
             allocationSize = 1
@@ -38,6 +38,7 @@ public class Customer {
     private String phoneNumber;
     private String educationalInstitution;
     private String currentWorkPlace;
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
 }

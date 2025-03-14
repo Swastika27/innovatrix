@@ -1,8 +1,8 @@
 package com.innovatrix.ahaar.service;
 
-import com.innovatrix.ahaar.DTO.CustomerDTO;
-import com.innovatrix.ahaar.DTO.JwtResponseDTO;
-import com.innovatrix.ahaar.DTO.LoginDTO;
+import com.innovatrix.ahaar.dto.CustomerDTO;
+import com.innovatrix.ahaar.dto.JwtResponseDTO;
+import com.innovatrix.ahaar.dto.LoginDTO;
 import com.innovatrix.ahaar.exception.UserNotFoundException;
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.Customer;
@@ -56,15 +56,14 @@ public class CustomerService {
         }
 //        checkConditions(user);
         Customer customer = Customer.builder().user(new ApplicationUser(customerDTO.getUserName(), customerDTO.getEmail(), bCryptPasswordEncoder.encode(customerDTO.getPassword()), Role.CUSTOMER))
-                        .dateOfBirth(customerDTO.getDateOfBirth())
-                                .currentWorkPlace(customerDTO.getCurrentWorkPlace())
-                                        .currentAddress(customerDTO.getCurrentAddress())
-                                                .name(customerDTO.getName())
-                                                        .gender(customerDTO.getGender())
-                                                                .homeTown(customerDTO.getHomeTown())
-                                                                        .educationalInstitution(customerDTO.getEducationalInstitution())
-                                                                                .phoneNumber(customerDTO.getPhoneNumber()).build();
-        customer.getUser().setPassword(bCryptPasswordEncoder.encode(customer.getUser().getPassword()));
+                .dateOfBirth(customerDTO.getDateOfBirth())
+                .currentWorkPlace(customerDTO.getCurrentWorkPlace())
+                .currentAddress(customerDTO.getCurrentAddress())
+                .name(customerDTO.getName())
+                .gender(customerDTO.getGender())
+                .homeTown(customerDTO.getHomeTown())
+                .educationalInstitution(customerDTO.getEducationalInstitution())
+                .phoneNumber(customerDTO.getPhoneNumber()).build();
         return Optional.of(customerRepository.save(customer));
     }
 
@@ -101,29 +100,26 @@ public class CustomerService {
 
     public Optional<Customer> getUserById(Long id) {
 
-        try {
-            String redisKey = RedisService.REDIS_PREFIX + id;
-            // Check if the user is in Redis cache
-            Customer cachedUser = redisService.get(redisKey, Customer.class);
+        String redisKey = RedisService.REDIS_PREFIX + id;
+        // Check if the user is in Redis cache
+        Customer cachedUser = redisService.get(redisKey, Customer.class);
 
-            if (cachedUser != null) {
-                // Return user from Redis cache
-                return Optional.of(cachedUser);
-            } else {
-                throw new UserNotFoundException(id);
-            }
-        } catch (Exception e) {
-            Optional<Customer> userOptional = customerRepository.findById(id);
-            if (userOptional.isEmpty()) {
-                throw new UserNotFoundException(id);
-            }
-            try {
-                redisService.set(RedisService.REDIS_PREFIX + id, userOptional.get(), 1);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            return userOptional;
+        if (cachedUser != null) {
+            // Return user from Redis cache
+            return Optional.of(cachedUser);
         }
+        // user not in cache
+        Optional<Customer> userOptional = customerRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException(id);
+        }
+        try {
+            redisService.set(RedisService.REDIS_PREFIX + id, userOptional.get(), 1);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return userOptional;
+
     }
 
     public String login(LoginDTO loginDTO) {
