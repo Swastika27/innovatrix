@@ -15,7 +15,7 @@ import java.util.Date;
 public class Customer {
     @Id
     @SequenceGenerator(
-            name = "customer_id_sequence",public
+            name = "customer_id_sequence",
             sequenceName = "customer_id_sequence",
             initialValue = 1,
             allocationSize = 1
