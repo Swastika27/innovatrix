@@ -3,8 +3,8 @@ package com.innovatrix.ahaar.service;
 import com.innovatrix.ahaar.exception.UserNotFoundException;
 
 import com.innovatrix.ahaar.model.ApplicationUser;
-import com.innovatrix.ahaar.DTO.ApplicationUserDTO;
-import com.innovatrix.ahaar.DTO.LoginDTO;
+import com.innovatrix.ahaar.dto.ApplicationUserDTO;
+import com.innovatrix.ahaar.dto.LoginDTO;
 import com.innovatrix.ahaar.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;

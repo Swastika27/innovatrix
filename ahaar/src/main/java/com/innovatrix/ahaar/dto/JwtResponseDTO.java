@@ -1,4 +1,4 @@
-package com.innovatrix.ahaar.DTO;
+package com.innovatrix.ahaar.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,8 +1,8 @@
 package com.innovatrix.ahaar.service;
 
-import com.innovatrix.ahaar.DTO.JwtResponseDTO;
-import com.innovatrix.ahaar.DTO.LoginDTO;
-import com.innovatrix.ahaar.DTO.RestaurantOwnerDTO;
+import com.innovatrix.ahaar.dto.JwtResponseDTO;
+import com.innovatrix.ahaar.dto.LoginDTO;
+import com.innovatrix.ahaar.dto.RestaurantOwnerDTO;
 import com.innovatrix.ahaar.exception.UserNotFoundException;
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.RefreshToken;

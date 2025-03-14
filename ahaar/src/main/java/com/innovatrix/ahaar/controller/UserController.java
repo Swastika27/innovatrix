@@ -1,12 +1,11 @@
 package com.innovatrix.ahaar.controller;
 
-import com.innovatrix.ahaar.DTO.JwtResponseDTO;
-import com.innovatrix.ahaar.DTO.RefreshTokenRequestDTO;
-import com.innovatrix.ahaar.exception.UserNotFoundException;
+import com.innovatrix.ahaar.dto.JwtResponseDTO;
+import com.innovatrix.ahaar.dto.RefreshTokenRequestDTO;
 import com.innovatrix.ahaar.model.APIResponse;
 import com.innovatrix.ahaar.model.ApplicationUser;
-import com.innovatrix.ahaar.DTO.ApplicationUserDTO;
-import com.innovatrix.ahaar.DTO.LoginDTO;
+import com.innovatrix.ahaar.dto.ApplicationUserDTO;
+import com.innovatrix.ahaar.dto.LoginDTO;
 import com.innovatrix.ahaar.model.RefreshToken;
 import com.innovatrix.ahaar.service.JWTService;
 import com.innovatrix.ahaar.service.RefreshTokenService;
@@ -14,17 +13,14 @@ import com.innovatrix.ahaar.service.UserService;
 import com.innovatrix.ahaar.service.UserServiceInterface;
 import com.innovatrix.ahaar.util.ResponseBuilder;
 import jakarta.validation.Valid;
-import org.hibernate.engine.jdbc.mutation.spi.BindingGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController()

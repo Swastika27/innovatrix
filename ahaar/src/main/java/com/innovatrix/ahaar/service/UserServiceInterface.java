@@ -1,8 +1,8 @@
 package com.innovatrix.ahaar.service;
 
 import com.innovatrix.ahaar.model.ApplicationUser;
-import com.innovatrix.ahaar.DTO.ApplicationUserDTO;
-import com.innovatrix.ahaar.DTO.LoginDTO;
+import com.innovatrix.ahaar.dto.ApplicationUserDTO;
+import com.innovatrix.ahaar.dto.LoginDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;

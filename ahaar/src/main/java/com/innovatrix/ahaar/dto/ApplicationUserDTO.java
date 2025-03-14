@@ -1,8 +1,9 @@
-package com.innovatrix.ahaar.DTO;
+package com.innovatrix.ahaar.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.Role;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,7 +33,7 @@ public class ApplicationUserDTO {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @NotBlank
+    @NotNull(message = "Role is required")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Role role;
 
