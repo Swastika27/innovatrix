@@ -4,7 +4,10 @@ package com.innovatrix.ahaar.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Set;
 
 @Entity
 @Data
@@ -31,11 +34,14 @@ public class RestaurantOwner {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false,
-    unique = true)
+            unique = true)
     private String phoneNumber;
     @Column(nullable = false,
-    unique = true)
+            unique = true)
     private String NID;
+
+    @OneToMany(mappedBy = "owner")
+    private Set<Restaurant> restaurants;
 
     public RestaurantOwner(ApplicationUser applicationUser, @NotBlank(message = "Name is required") @Size(min = 4, message = "Name must be at least 4 characters") String name, @NotBlank(message = "Phone number is required") String phoneNumber, @NotBlank(message = "NID is required") String nid) {
         this.user = applicationUser;
