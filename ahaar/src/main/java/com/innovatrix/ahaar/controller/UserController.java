@@ -1,11 +1,11 @@
 package com.innovatrix.ahaar.controller;
 
+import com.innovatrix.ahaar.dto.ApplicationUserDTO;
 import com.innovatrix.ahaar.dto.JwtResponseDTO;
+import com.innovatrix.ahaar.dto.LoginDTO;
 import com.innovatrix.ahaar.dto.RefreshTokenRequestDTO;
 import com.innovatrix.ahaar.model.APIResponse;
 import com.innovatrix.ahaar.model.ApplicationUser;
-import com.innovatrix.ahaar.dto.ApplicationUserDTO;
-import com.innovatrix.ahaar.dto.LoginDTO;
 import com.innovatrix.ahaar.model.RefreshToken;
 import com.innovatrix.ahaar.service.JWTService;
 import com.innovatrix.ahaar.service.RefreshTokenService;
@@ -42,7 +42,7 @@ public class UserController {
     public ResponseEntity<APIResponse<Page<ApplicationUser>>> getUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Page<ApplicationUser> allUsers =  userService.getAll(page, size);
+        Page<ApplicationUser> allUsers = userService.getAll(page, size);
 
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "User retrieved successfully", allUsers));
     }
@@ -56,7 +56,7 @@ public class UserController {
 
     @PutMapping(path = "{user_id}")
     public ResponseEntity<APIResponse<ApplicationUserDTO>> updateUser(@PathVariable("user_id") Long userId,
-                           @Valid @RequestBody ApplicationUserDTO userDTO) {
+                                                                      @Valid @RequestBody ApplicationUserDTO userDTO) {
         userService.updateUser(userId, userDTO);
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "User updated successfully", userDTO));
     }
@@ -70,7 +70,7 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<APIResponse<Optional<ApplicationUser>>> addUser(@Valid @RequestBody ApplicationUserDTO userDTO, BindingResult bindingResult) throws BindException {
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
 
@@ -81,11 +81,12 @@ public class UserController {
 
 
     /**
-     +     * Authenticates user credentials and generates JWT token
-     +     * @param loginDTO Contains user login credentials
-     +     * @return JWT token string upon successful authentication
-     +     * @throws AuthenticationException If credentials are invalid
-     +     */
+     * +     * Authenticates user credentials and generates JWT token
+     * +     * @param loginDTO Contains user login credentials
+     * +     * @return JWT token string upon successful authentication
+     * +     * @throws AuthenticationException If credentials are invalid
+     * +
+     */
     @PostMapping("/login")
     public ResponseEntity<APIResponse<JwtResponseDTO>> authenticateAndGetToken(@Valid @RequestBody LoginDTO loginDTO, BindingResult bindingResult) {
 
@@ -96,7 +97,7 @@ public class UserController {
                     .accessToken(jwtToken)
                     .refreshToken(refreshToken.getToken()).build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(ResponseBuilder.success(HttpStatus.OK.value(), "logged in successfully", jwtResponseDTO))    ;
+            return ResponseEntity.status(HttpStatus.OK).body(ResponseBuilder.success(HttpStatus.OK.value(), "logged in successfully", jwtResponseDTO));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ResponseBuilder.error(HttpStatus.UNAUTHORIZED.value(), "Authentication failed", null));

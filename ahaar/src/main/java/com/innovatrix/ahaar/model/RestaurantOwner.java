@@ -30,9 +30,11 @@ public class RestaurantOwner {
 
     @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
+    @Column(nullable = false,
+    unique = true)
     private String phoneNumber;
-    @Column(nullable = false)
+    @Column(nullable = false,
+    unique = true)
     private String NID;
 
     public RestaurantOwner(ApplicationUser applicationUser, @NotBlank(message = "Name is required") @Size(min = 4, message = "Name must be at least 4 characters") String name, @NotBlank(message = "Phone number is required") String phoneNumber, @NotBlank(message = "NID is required") String nid) {

@@ -1,5 +1,9 @@
 package com.innovatrix.ahaar.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Temporal;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -9,10 +13,6 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Temporal;
 import java.util.Date;
 
 import static jakarta.persistence.TemporalType.TIMESTAMP;
@@ -36,11 +36,11 @@ public abstract class Auditable<T> {
     protected Date lastModifiedDate;
 
     @CreatedBy
-    @Column(name="created_by")
+    @Column(name = "created_by")
     protected T createdBy;
 
     @LastModifiedBy
-    @Column(name="modified_by")
+    @Column(name = "modified_by")
     protected T modifiedBy;
 
 }

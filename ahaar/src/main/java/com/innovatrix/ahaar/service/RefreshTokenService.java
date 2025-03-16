@@ -24,6 +24,7 @@ public class RefreshTokenService {
         this.refreshTokenRepository = refreshTokenRepository;
         this.userRepository = userRepository;
     }
+
     private static final long TIMEOUT = 1000 * 60 * 5; // 5 minute
 
     public RefreshToken createRefreshToken(String username) {
@@ -34,11 +35,11 @@ public class RefreshTokenService {
 
         Optional<RefreshToken> previousToken = refreshTokenRepository.findByUser(user.get());
 
-        if(previousToken.isPresent() && previousToken.get().getExpiryDate().isAfter(Instant.now())) {
+        if (previousToken.isPresent() && previousToken.get().getExpiryDate().isAfter(Instant.now())) {
             return previousToken.get();
         }
 
-        if(previousToken.isPresent() && previousToken.get().getExpiryDate().isBefore(Instant.now())) {
+        if (previousToken.isPresent() && previousToken.get().getExpiryDate().isBefore(Instant.now())) {
             refreshTokenRepository.delete(previousToken.get());
         }
         RefreshToken refreshToken = RefreshToken.builder()

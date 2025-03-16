@@ -14,6 +14,7 @@ public class ApplicationUserDetails implements UserDetails {
     public ApplicationUserDetails(ApplicationUser applicationUser) {
         this.user = applicationUser;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole()));

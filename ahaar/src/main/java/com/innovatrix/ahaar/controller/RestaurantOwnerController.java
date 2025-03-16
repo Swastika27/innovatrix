@@ -39,7 +39,7 @@ public class RestaurantOwnerController {
     @GetMapping("/")
     public ResponseEntity<APIResponse<Page<RestaurantOwner>>> getAll(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size){
+            @RequestParam(defaultValue = "10") int size) {
 
         Page<RestaurantOwner> allRestaurantOwners = restaurantOwnerService.getAll(page, size);
 
@@ -47,27 +47,27 @@ public class RestaurantOwnerController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<APIResponse<RestaurantOwner>> getById(@PathVariable Long id){
+    public ResponseEntity<APIResponse<RestaurantOwner>> getById(@PathVariable Long id) {
         RestaurantOwner restaurantOwner = restaurantOwnerService.getById(id);
 
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "restaurant owner retrieved successfylly", restaurantOwner));
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<APIResponse<RestaurantOwner>> update(@PathVariable int id, @RequestBody RestaurantOwner restaurantOwner){
+    public ResponseEntity<APIResponse<RestaurantOwner>> update(@PathVariable int id, @RequestBody RestaurantOwner restaurantOwner) {
 
-       return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "Information updated successfully", restaurantOwnerService.update(restaurantOwner)));
+        return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "Information updated successfully", restaurantOwnerService.update(restaurantOwner)));
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<APIResponse<RestaurantOwner>> delete(@PathVariable Long id){
+    public ResponseEntity<APIResponse<RestaurantOwner>> delete(@PathVariable Long id) {
         restaurantOwnerService.delete(id);
         return ResponseEntity.ok(ResponseBuilder.success(HttpStatus.OK.value(), "Restaurant owner deleted successfully", null));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<APIResponse<RestaurantOwner>> signup(@Valid @RequestBody RestaurantOwnerDTO restaurantOwnerDTO, BindingResult bindingResult) throws BindException {
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             throw new BindException(bindingResult);
         }
 
@@ -77,7 +77,7 @@ public class RestaurantOwnerController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<APIResponse<JwtResponseDTO>> login(@Valid @RequestBody LoginDTO loginDTO){
+    public ResponseEntity<APIResponse<JwtResponseDTO>> login(@Valid @RequestBody LoginDTO loginDTO) {
         try {
             String jwtToken = restaurantOwnerService.login(loginDTO);
             RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginDTO.getUsername());
@@ -85,7 +85,7 @@ public class RestaurantOwnerController {
                     .accessToken(jwtToken)
                     .refreshToken(refreshToken.getToken()).build();
 
-            return ResponseEntity.status(HttpStatus.OK).body(ResponseBuilder.success(HttpStatus.OK.value(), "logged in successfully", jwtResponseDTO))    ;
+            return ResponseEntity.status(HttpStatus.OK).body(ResponseBuilder.success(HttpStatus.OK.value(), "logged in successfully", jwtResponseDTO));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ResponseBuilder.error(HttpStatus.UNAUTHORIZED.value(), "Authentication failed", null));
@@ -95,7 +95,7 @@ public class RestaurantOwnerController {
     @PostMapping("/refreshToken")
     public ResponseEntity<APIResponse<JwtResponseDTO>> refreshToken(@RequestBody RefreshTokenRequestDTO refreshTokenRequestDTO) {
         JwtResponseDTO jwtResponseDTO = customerService.refresh(refreshTokenRequestDTO.getRefreshToken());
-        if(jwtResponseDTO == null){
+        if (jwtResponseDTO == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ResponseBuilder.error(HttpStatus.UNAUTHORIZED.value(), "Invalid refresh token", null));
         }

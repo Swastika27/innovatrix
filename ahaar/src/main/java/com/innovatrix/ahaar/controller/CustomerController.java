@@ -90,7 +90,7 @@ public class CustomerController {
     public ResponseEntity<APIResponse<JwtResponseDTO>> refreshToken(@RequestBody RefreshTokenRequestDTO refreshToken) {
         JwtResponseDTO jwtResponseDTO = customerService.refresh(refreshToken.getRefreshToken());
 
-        if(jwtResponseDTO == null) {
+        if (jwtResponseDTO == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(ResponseBuilder.error(HttpStatus.UNAUTHORIZED.value(), "Invalid refresh token", null));
         }

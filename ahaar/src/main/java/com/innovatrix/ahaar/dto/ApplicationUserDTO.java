@@ -1,17 +1,16 @@
 package com.innovatrix.ahaar.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.innovatrix.ahaar.model.ApplicationUser;
 import com.innovatrix.ahaar.model.Role;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 
 @Setter
@@ -37,7 +36,7 @@ public class ApplicationUserDTO {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Role role;
 
-    public ApplicationUser toEntity () {
+    public ApplicationUser toEntity() {
         return new ApplicationUser(this.userName, this.email, this.password, this.role);
     }
 
