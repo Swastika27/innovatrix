@@ -100,26 +100,30 @@ public class CustomerService {
 
     public Optional<Customer> getUserById(Long id) {
 
-        String redisKey = RedisService.REDIS_PREFIX + id;
-        // Check if the user is in Redis cache
-        Customer cachedUser = redisService.get(redisKey, Customer.class);
-
-        if (cachedUser != null) {
-            // Return user from Redis cache
-            return Optional.of(cachedUser);
-        }
-        // user not in cache
-        Optional<Customer> userOptional = customerRepository.findById(id);
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException(id);
-        }
         try {
-            redisService.set(RedisService.REDIS_PREFIX + id, userOptional.get(), 1);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return userOptional;
+            String redisKey = RedisService.REDIS_PREFIX + id;
+            // Check if the user is in Redis cache
+            Customer cachedUser = redisService.get(redisKey, Customer.class);
 
+            if (cachedUser != null) {
+                // Return user from Redis cache
+                return Optional.of(cachedUser);
+            }
+        } catch (Exception e) {
+            // user not in cache
+            Optional<Customer> userOptional = customerRepository.findById(id);
+            if (userOptional.isEmpty()) {
+                throw new UserNotFoundException(id);
+            }
+            try {
+                redisService.set(RedisService.REDIS_PREFIX + id, userOptional.get(), 1);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return userOptional;
+        }
+
+        return null;
     }
 
     public String login(LoginDTO loginDTO) {
