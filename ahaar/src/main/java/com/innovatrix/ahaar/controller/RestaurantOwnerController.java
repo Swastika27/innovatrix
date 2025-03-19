@@ -1,11 +1,9 @@
 package com.innovatrix.ahaar.controller;
 
-import com.innovatrix.ahaar.dto.JwtResponseDTO;
-import com.innovatrix.ahaar.dto.LoginDTO;
-import com.innovatrix.ahaar.dto.RefreshTokenRequestDTO;
-import com.innovatrix.ahaar.dto.RestaurantOwnerDTO;
+import com.innovatrix.ahaar.dto.*;
 import com.innovatrix.ahaar.model.APIResponse;
 import com.innovatrix.ahaar.model.RefreshToken;
+import com.innovatrix.ahaar.model.Restaurant;
 import com.innovatrix.ahaar.model.RestaurantOwner;
 import com.innovatrix.ahaar.service.CustomerService;
 import com.innovatrix.ahaar.service.RefreshTokenService;

@@ -1,16 +1,17 @@
 package com.innovatrix.ahaar.service;
 
+import com.innovatrix.ahaar.dto.RestaurantRequestDTO;
 import com.innovatrix.ahaar.dto.JwtResponseDTO;
 import com.innovatrix.ahaar.dto.LoginDTO;
 import com.innovatrix.ahaar.dto.RestaurantOwnerDTO;
 import com.innovatrix.ahaar.exception.UserNotFoundException;
-import com.innovatrix.ahaar.model.ApplicationUser;
-import com.innovatrix.ahaar.model.RefreshToken;
-import com.innovatrix.ahaar.model.RestaurantOwner;
-import com.innovatrix.ahaar.model.Role;
+import com.innovatrix.ahaar.model.*;
 import com.innovatrix.ahaar.repository.RestaurantOwnerRepository;
+import com.innovatrix.ahaar.repository.RestaurantRepository;
 import com.innovatrix.ahaar.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,8 +25,11 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class RestaurantOwnerService {
+
     private final RestaurantOwnerRepository restaurantOwnerRepository;
+    private final RestaurantRepository restaurantRepository;
 
     private AuthenticationManager authenticationManager;
 
@@ -39,8 +43,10 @@ public class RestaurantOwnerService {
 
     private final RefreshTokenService refreshTokenService;
 
+    private final LocationService locationService;
+
     @Autowired
-    public RestaurantOwnerService(RestaurantOwnerRepository restaurantOwnerRepository, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, JWTService jwtService, UserRepository userRepository, RedisService redisService, RefreshTokenService refreshTokenService) {
+    public RestaurantOwnerService(RestaurantOwnerRepository restaurantOwnerRepository, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, JWTService jwtService, UserRepository userRepository, RedisService redisService, RefreshTokenService refreshTokenService, LocationService locationService, RestaurantRepository restaurantRepository) {
         this.restaurantOwnerRepository = restaurantOwnerRepository;
         this.authenticationManager = authenticationManager;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -48,6 +54,8 @@ public class RestaurantOwnerService {
         this.userRepository = userRepository;
         this.redisService = redisService;
         this.refreshTokenService = refreshTokenService;
+        this.locationService = locationService;
+        this.restaurantRepository = restaurantRepository;
     }
 
     public Page<RestaurantOwner> getAll(int page, int size) {
@@ -110,13 +118,84 @@ public class RestaurantOwnerService {
                 .map(RefreshToken::getUser)
                 .map(userInfo -> {
                     String accessToken = jwtService.generateToken(userInfo.getUserName());
-                    JwtResponseDTO jwtResponseDTO = JwtResponseDTO.builder()
+                    return JwtResponseDTO.builder()
                             .accessToken(accessToken)
                             .refreshToken(token)
                             .build();
-                    return jwtResponseDTO;
                 }).orElse(null);
 
     }
 
+    public Restaurant addRestaurant(String userName, RestaurantRequestDTO requestDTO) {
+        log.info("RestaruantOwnerService: addRestaurant");
+        Optional<ApplicationUser> user = userRepository.findByUserName(userName);
+        log.info("User: {}", user);
+        if (user.isEmpty()) {
+            throw new IllegalStateException("User not logged in");
+        }
+        Optional<RestaurantOwner> owner = restaurantOwnerRepository.findById(user.get().getId());
+        log.info("Restaurant owner: {}", owner);
+        if (owner.isEmpty()) {
+            throw new UserNotFoundException(user.get().getId());
+        }
+
+        Point location = locationService.createPoint(requestDTO.getLocationDTO().getLatitude(), requestDTO.getLocationDTO().getLongitude());
+        Restaurant restaurant = requestDTO.getRestaurantDTO().toRestaurant(owner.get(), location);
+        owner.get().addRestaurant(restaurant);
+        log.info("Restaurant added: {}", restaurant);
+        return restaurantRepository.save(restaurant);
+    }
+
+    @Transactional
+    public Restaurant updateRestaurant(String userName, Long restaurantId, RestaurantRequestDTO restaurantRequestDTO) {
+        log.info("RestaruantOwnerService: addRestaurant");
+        Optional<ApplicationUser> user = userRepository.findByUserName(userName);
+        log.info("User: {}", user);
+        if (user.isEmpty()) {
+            throw new IllegalStateException("User not logged in");
+        }
+        Optional<RestaurantOwner> owner = restaurantOwnerRepository.findById(user.get().getId());
+        log.info("Restaurant owner: {}", owner);
+        if (owner.isEmpty()) {
+            throw new UserNotFoundException(user.get().getId());
+        }
+
+        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
+        log.info("Restaurant: {}", restaurant);
+        if(restaurant.isEmpty()) {
+            throw new IllegalStateException("Restaurant not found");
+        }
+
+        restaurant.get().setName(restaurantRequestDTO.getRestaurantDTO().getName());
+        restaurant.get().setContactNumber(restaurantRequestDTO.getRestaurantDTO().getContactNumber());
+        Point location = locationService.createPoint(restaurantRequestDTO.getLocationDTO().getLatitude(), restaurantRequestDTO.getLocationDTO().getLongitude());
+        restaurant.get().setLocation(location);
+        restaurant.get().setCuisine(restaurantRequestDTO.getRestaurantDTO().getCuisine());
+        restaurant.get().setOpenTime(restaurantRequestDTO.getRestaurantDTO().getOpenTime());
+        restaurant.get().setCloseTime(restaurantRequestDTO.getRestaurantDTO().getCloseTime());
+
+        return restaurantRepository.save(restaurant.get());
+    }
+
+    public void deleteRestaurant(String userName, Long restaurantId) {
+        log.info("RestaruantOwnerService: addRestaurant");
+        Optional<ApplicationUser> user = userRepository.findByUserName(userName);
+        log.info("User: {}", user);
+        if (user.isEmpty()) {
+            throw new IllegalStateException("User not logged in");
+        }
+        Optional<RestaurantOwner> owner = restaurantOwnerRepository.findById(user.get().getId());
+        log.info("Restaurant owner: {}", owner);
+        if (owner.isEmpty()) {
+            throw new UserNotFoundException(user.get().getId());
+        }
+
+        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
+        log.info("Restaurant: {}", restaurant);
+        if(restaurant.isEmpty()) {
+            throw new IllegalStateException("Restaurant not found");
+        }
+
+        restaurantRepository.delete(restaurant.get());
+    }
 }

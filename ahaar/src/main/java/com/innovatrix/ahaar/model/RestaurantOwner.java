@@ -1,16 +1,20 @@
 package com.innovatrix.ahaar.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.data.repository.cdi.Eager;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 public class RestaurantOwner {
     @Id
@@ -27,7 +31,7 @@ public class RestaurantOwner {
     private Long id;
 
     @MapsId
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id")
     private ApplicationUser user;
 
@@ -41,6 +45,7 @@ public class RestaurantOwner {
     private String NID;
 
     @OneToMany(mappedBy = "owner")
+    @JsonManagedReference
     private Set<Restaurant> restaurants;
 
     public RestaurantOwner(ApplicationUser applicationUser, @NotBlank(message = "Name is required") @Size(min = 4, message = "Name must be at least 4 characters") String name, @NotBlank(message = "Phone number is required") String phoneNumber, @NotBlank(message = "NID is required") String nid) {
@@ -48,5 +53,11 @@ public class RestaurantOwner {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.NID = nid;
+        this.restaurants = new HashSet<>();
+    }
+
+    public Restaurant addRestaurant (Restaurant restaurant) {
+        restaurants.add(restaurant);
+        return restaurant;
     }
 }
