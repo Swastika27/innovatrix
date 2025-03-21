@@ -45,8 +45,7 @@ public class Restaurant {
 
     private String cuisine;
 
-    @OneToMany
-    @JoinColumn(name = "restaurant_id", nullable = false)
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<FoodItem> menu;
 
     private Time openTime;
@@ -59,5 +58,13 @@ public class Restaurant {
         this.location = location;
         this.cuisine = cuisine;
         this.menu = new HashSet<>();
+    }
+
+    public void addItem(FoodItem foodItem) {
+        menu.add(foodItem);
+    }
+
+    public void removeItem(FoodItem foodItem) {
+        menu.remove(foodItem);
     }
 }

@@ -49,6 +49,13 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<APIResponse<Void>> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ResponseBuilder.error(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null));
+
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<APIResponse<Void>> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

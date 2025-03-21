@@ -1,11 +1,10 @@
 package com.innovatrix.ahaar.service;
 
-import com.innovatrix.ahaar.dto.RestaurantRequestDTO;
-import com.innovatrix.ahaar.dto.JwtResponseDTO;
-import com.innovatrix.ahaar.dto.LoginDTO;
-import com.innovatrix.ahaar.dto.RestaurantOwnerDTO;
+import com.innovatrix.ahaar.dto.*;
+import com.innovatrix.ahaar.exception.ResourceNotFoundException;
 import com.innovatrix.ahaar.exception.UserNotFoundException;
 import com.innovatrix.ahaar.model.*;
+import com.innovatrix.ahaar.repository.FoodItemRepository;
 import com.innovatrix.ahaar.repository.RestaurantOwnerRepository;
 import com.innovatrix.ahaar.repository.RestaurantRepository;
 import com.innovatrix.ahaar.repository.UserRepository;
@@ -23,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -45,8 +45,10 @@ public class RestaurantOwnerService {
 
     private final LocationService locationService;
 
+    private final FoodItemRepository foodItemRepository;
+
     @Autowired
-    public RestaurantOwnerService(RestaurantOwnerRepository restaurantOwnerRepository, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, JWTService jwtService, UserRepository userRepository, RedisService redisService, RefreshTokenService refreshTokenService, LocationService locationService, RestaurantRepository restaurantRepository) {
+    public RestaurantOwnerService(RestaurantOwnerRepository restaurantOwnerRepository, AuthenticationManager authenticationManager, BCryptPasswordEncoder bCryptPasswordEncoder, JWTService jwtService, UserRepository userRepository, RedisService redisService, RefreshTokenService refreshTokenService, LocationService locationService, RestaurantRepository restaurantRepository, FoodItemRepository foodItemRepository) {
         this.restaurantOwnerRepository = restaurantOwnerRepository;
         this.authenticationManager = authenticationManager;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
@@ -56,6 +58,7 @@ public class RestaurantOwnerService {
         this.refreshTokenService = refreshTokenService;
         this.locationService = locationService;
         this.restaurantRepository = restaurantRepository;
+        this.foodItemRepository = foodItemRepository;
     }
 
     public Page<RestaurantOwner> getAll(int page, int size) {
@@ -127,7 +130,7 @@ public class RestaurantOwnerService {
     }
 
     public Restaurant addRestaurant(String userName, RestaurantRequestDTO requestDTO) {
-        log.info("RestaruantOwnerService: addRestaurant");
+        log.info("RestaurantOwnerService: addRestaurant");
         Optional<ApplicationUser> user = userRepository.findByUserName(userName);
         log.info("User: {}", user);
         if (user.isEmpty()) {
@@ -148,7 +151,8 @@ public class RestaurantOwnerService {
 
     @Transactional
     public Restaurant updateRestaurant(String userName, Long restaurantId, RestaurantRequestDTO restaurantRequestDTO) {
-        log.info("RestaruantOwnerService: addRestaurant");
+        log.info("RestaurantOwnerService: updateRestaurant");
+
         Optional<ApplicationUser> user = userRepository.findByUserName(userName);
         log.info("User: {}", user);
         if (user.isEmpty()) {
@@ -178,7 +182,7 @@ public class RestaurantOwnerService {
     }
 
     public void deleteRestaurant(String userName, Long restaurantId) {
-        log.info("RestaruantOwnerService: addRestaurant");
+        log.info("RestaurantOwnerService: deleteRestaurant");
         Optional<ApplicationUser> user = userRepository.findByUserName(userName);
         log.info("User: {}", user);
         if (user.isEmpty()) {
@@ -197,5 +201,108 @@ public class RestaurantOwnerService {
         }
 
         restaurantRepository.delete(restaurant.get());
+    }
+
+    public void addFoodItem(String userName, Long restaurantId, FoodItemDTO foodItemDTO) throws ResourceNotFoundException {
+        log.info("RestaruantOwnerService: addFoodItem");
+
+        Optional<ApplicationUser> user = userRepository.findByUserName(userName);
+        log.info("User: {}", user);
+        if (user.isEmpty()) {
+            throw new IllegalStateException("User not logged in");
+        }
+        
+        Optional<RestaurantOwner> owner = restaurantOwnerRepository.findById(user.get().getId());
+        log.info("Restaurant owner: {}", owner);
+        if (owner.isEmpty()) {
+            throw new UserNotFoundException(user.get().getId());
+        }
+
+        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
+        log.info("Restaurant: {}", restaurant);
+        if(restaurant.isEmpty()) {
+            throw new ResourceNotFoundException("restaurant");
+        }
+
+        FoodItem item = foodItemDTO.toFoodItem();
+        item.setRestaurant(restaurant.get());
+        foodItemRepository.save(item);
+        restaurant.get().addItem(item);
+        restaurantRepository.save(restaurant.get());
+    }
+
+    @Transactional
+    public void editFoodItem(String userName, Long restaurantId, Long itemId, FoodItemDTO foodItemDTO) throws ResourceNotFoundException {
+        log.info("RestaurantOwnerService: editFoodItem");
+
+        Optional<ApplicationUser> user = userRepository.findByUserName(userName);
+        log.info("User: {}", user);
+        if (user.isEmpty()) {
+            throw new IllegalStateException("User not logged in");
+        }
+
+        Optional<RestaurantOwner> owner = restaurantOwnerRepository.findById(user.get().getId());
+        log.info("Restaurant owner: {}", owner);
+        if (owner.isEmpty()) {
+            throw new UserNotFoundException(user.get().getId());
+        }
+
+        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
+        log.info("Restaurant: {}", restaurant);
+        if(restaurant.isEmpty()) {
+            throw new ResourceNotFoundException("restaurant");
+        }
+
+        Optional<FoodItem> item = foodItemRepository.findById(itemId);
+        if(item.isEmpty()) {
+            throw new ResourceNotFoundException("item");
+        }
+
+        item.get().setName(foodItemDTO.getName());
+        item.get().setDescription(foodItemDTO.getDescription());
+        item.get().setPrice(foodItemDTO.getPrice());
+        item.get().setServing(foodItemDTO.getServing());
+        item.get().setAvailable(foodItemDTO.isAvailable());
+        item.get().setImageUrl(foodItemDTO.getImageUrl());
+
+        foodItemRepository.save(item.get());
+    }
+
+    public void deleteFoodItem(String userName, Long restaurantId, Long itemId) throws ResourceNotFoundException {
+        Optional<ApplicationUser> user = userRepository.findByUserName(userName);
+        log.info("User: {}", user);
+        if (user.isEmpty()) {
+            throw new IllegalStateException("User not logged in");
+        }
+
+        Optional<RestaurantOwner> owner = restaurantOwnerRepository.findById(user.get().getId());
+        log.info("Restaurant owner: {}", owner);
+        if (owner.isEmpty()) {
+            throw new UserNotFoundException(user.get().getId());
+        }
+
+        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
+        log.info("Restaurant: {}", restaurant);
+        if(restaurant.isEmpty()) {
+            throw new ResourceNotFoundException("restaurant");
+        }
+
+        Optional<FoodItem> item = foodItemRepository.findById(itemId);
+        if(item.isEmpty()) {
+            throw new ResourceNotFoundException("item");
+        }
+
+        restaurant.get().removeItem(item.get());
+        foodItemRepository.delete(item.get());
+    }
+
+    public Set<FoodItem> getAllItems(Long restaurantId) throws ResourceNotFoundException {
+        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
+        log.info("Restaurant: {}", restaurant);
+        if(restaurant.isEmpty()) {
+            throw new ResourceNotFoundException("restaurant");
+        }
+
+        return restaurant.get().getMenu();
     }
 }

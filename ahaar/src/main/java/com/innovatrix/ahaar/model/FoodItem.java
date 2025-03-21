@@ -1,12 +1,16 @@
 package com.innovatrix.ahaar.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 @NoArgsConstructor
+@Builder
+@ToString
 public class FoodItem {
     @Id
     @SequenceGenerator(
@@ -20,6 +24,11 @@ public class FoodItem {
             generator = "food_item_id_sequence"
     )
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id", nullable = false)
+    @JsonIgnore
+    private Restaurant restaurant;
 
     @Column(nullable = false)
     private String name;
