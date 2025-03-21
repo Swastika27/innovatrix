@@ -2,6 +2,7 @@ package com.innovatrix.ahaar.service;
 
 import com.innovatrix.ahaar.dto.*;
 import com.innovatrix.ahaar.exception.ResourceNotFoundException;
+import com.innovatrix.ahaar.exception.UnauthorizedActionException;
 import com.innovatrix.ahaar.exception.UserNotFoundException;
 import com.innovatrix.ahaar.model.*;
 import com.innovatrix.ahaar.repository.FoodItemRepository;
@@ -21,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -129,180 +131,4 @@ public class RestaurantOwnerService {
 
     }
 
-    public Restaurant addRestaurant(String userName, RestaurantRequestDTO requestDTO) {
-        log.info("RestaurantOwnerService: addRestaurant");
-        Optional<ApplicationUser> user = userRepository.findByUserName(userName);
-        log.info("User: {}", user);
-        if (user.isEmpty()) {
-            throw new IllegalStateException("User not logged in");
-        }
-        Optional<RestaurantOwner> owner = restaurantOwnerRepository.findById(user.get().getId());
-        log.info("Restaurant owner: {}", owner);
-        if (owner.isEmpty()) {
-            throw new UserNotFoundException(user.get().getId());
-        }
-
-        Point location = locationService.createPoint(requestDTO.getLocationDTO().getLatitude(), requestDTO.getLocationDTO().getLongitude());
-        Restaurant restaurant = requestDTO.getRestaurantDTO().toRestaurant(owner.get(), location);
-        owner.get().addRestaurant(restaurant);
-        log.info("Restaurant added: {}", restaurant);
-        return restaurantRepository.save(restaurant);
-    }
-
-    @Transactional
-    public Restaurant updateRestaurant(String userName, Long restaurantId, RestaurantRequestDTO restaurantRequestDTO) {
-        log.info("RestaurantOwnerService: updateRestaurant");
-
-        Optional<ApplicationUser> user = userRepository.findByUserName(userName);
-        log.info("User: {}", user);
-        if (user.isEmpty()) {
-            throw new IllegalStateException("User not logged in");
-        }
-        Optional<RestaurantOwner> owner = restaurantOwnerRepository.findById(user.get().getId());
-        log.info("Restaurant owner: {}", owner);
-        if (owner.isEmpty()) {
-            throw new UserNotFoundException(user.get().getId());
-        }
-
-        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
-        log.info("Restaurant: {}", restaurant);
-        if(restaurant.isEmpty()) {
-            throw new IllegalStateException("Restaurant not found");
-        }
-
-        restaurant.get().setName(restaurantRequestDTO.getRestaurantDTO().getName());
-        restaurant.get().setContactNumber(restaurantRequestDTO.getRestaurantDTO().getContactNumber());
-        Point location = locationService.createPoint(restaurantRequestDTO.getLocationDTO().getLatitude(), restaurantRequestDTO.getLocationDTO().getLongitude());
-        restaurant.get().setLocation(location);
-        restaurant.get().setCuisine(restaurantRequestDTO.getRestaurantDTO().getCuisine());
-        restaurant.get().setOpenTime(restaurantRequestDTO.getRestaurantDTO().getOpenTime());
-        restaurant.get().setCloseTime(restaurantRequestDTO.getRestaurantDTO().getCloseTime());
-
-        return restaurantRepository.save(restaurant.get());
-    }
-
-    public void deleteRestaurant(String userName, Long restaurantId) {
-        log.info("RestaurantOwnerService: deleteRestaurant");
-        Optional<ApplicationUser> user = userRepository.findByUserName(userName);
-        log.info("User: {}", user);
-        if (user.isEmpty()) {
-            throw new IllegalStateException("User not logged in");
-        }
-        Optional<RestaurantOwner> owner = restaurantOwnerRepository.findById(user.get().getId());
-        log.info("Restaurant owner: {}", owner);
-        if (owner.isEmpty()) {
-            throw new UserNotFoundException(user.get().getId());
-        }
-
-        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
-        log.info("Restaurant: {}", restaurant);
-        if(restaurant.isEmpty()) {
-            throw new IllegalStateException("Restaurant not found");
-        }
-
-        restaurantRepository.delete(restaurant.get());
-    }
-
-    public void addFoodItem(String userName, Long restaurantId, FoodItemDTO foodItemDTO) throws ResourceNotFoundException {
-        log.info("RestaruantOwnerService: addFoodItem");
-
-        Optional<ApplicationUser> user = userRepository.findByUserName(userName);
-        log.info("User: {}", user);
-        if (user.isEmpty()) {
-            throw new IllegalStateException("User not logged in");
-        }
-        
-        Optional<RestaurantOwner> owner = restaurantOwnerRepository.findById(user.get().getId());
-        log.info("Restaurant owner: {}", owner);
-        if (owner.isEmpty()) {
-            throw new UserNotFoundException(user.get().getId());
-        }
-
-        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
-        log.info("Restaurant: {}", restaurant);
-        if(restaurant.isEmpty()) {
-            throw new ResourceNotFoundException("restaurant");
-        }
-
-        FoodItem item = foodItemDTO.toFoodItem();
-        item.setRestaurant(restaurant.get());
-        foodItemRepository.save(item);
-        restaurant.get().addItem(item);
-        restaurantRepository.save(restaurant.get());
-    }
-
-    @Transactional
-    public void editFoodItem(String userName, Long restaurantId, Long itemId, FoodItemDTO foodItemDTO) throws ResourceNotFoundException {
-        log.info("RestaurantOwnerService: editFoodItem");
-
-        Optional<ApplicationUser> user = userRepository.findByUserName(userName);
-        log.info("User: {}", user);
-        if (user.isEmpty()) {
-            throw new IllegalStateException("User not logged in");
-        }
-
-        Optional<RestaurantOwner> owner = restaurantOwnerRepository.findById(user.get().getId());
-        log.info("Restaurant owner: {}", owner);
-        if (owner.isEmpty()) {
-            throw new UserNotFoundException(user.get().getId());
-        }
-
-        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
-        log.info("Restaurant: {}", restaurant);
-        if(restaurant.isEmpty()) {
-            throw new ResourceNotFoundException("restaurant");
-        }
-
-        Optional<FoodItem> item = foodItemRepository.findById(itemId);
-        if(item.isEmpty()) {
-            throw new ResourceNotFoundException("item");
-        }
-
-        item.get().setName(foodItemDTO.getName());
-        item.get().setDescription(foodItemDTO.getDescription());
-        item.get().setPrice(foodItemDTO.getPrice());
-        item.get().setServing(foodItemDTO.getServing());
-        item.get().setAvailable(foodItemDTO.isAvailable());
-        item.get().setImageUrl(foodItemDTO.getImageUrl());
-
-        foodItemRepository.save(item.get());
-    }
-
-    public void deleteFoodItem(String userName, Long restaurantId, Long itemId) throws ResourceNotFoundException {
-        Optional<ApplicationUser> user = userRepository.findByUserName(userName);
-        log.info("User: {}", user);
-        if (user.isEmpty()) {
-            throw new IllegalStateException("User not logged in");
-        }
-
-        Optional<RestaurantOwner> owner = restaurantOwnerRepository.findById(user.get().getId());
-        log.info("Restaurant owner: {}", owner);
-        if (owner.isEmpty()) {
-            throw new UserNotFoundException(user.get().getId());
-        }
-
-        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
-        log.info("Restaurant: {}", restaurant);
-        if(restaurant.isEmpty()) {
-            throw new ResourceNotFoundException("restaurant");
-        }
-
-        Optional<FoodItem> item = foodItemRepository.findById(itemId);
-        if(item.isEmpty()) {
-            throw new ResourceNotFoundException("item");
-        }
-
-        restaurant.get().removeItem(item.get());
-        foodItemRepository.delete(item.get());
-    }
-
-    public Set<FoodItem> getAllItems(Long restaurantId) throws ResourceNotFoundException {
-        Optional<Restaurant> restaurant = restaurantRepository.findById(restaurantId);
-        log.info("Restaurant: {}", restaurant);
-        if(restaurant.isEmpty()) {
-            throw new ResourceNotFoundException("restaurant");
-        }
-
-        return restaurant.get().getMenu();
-    }
 }

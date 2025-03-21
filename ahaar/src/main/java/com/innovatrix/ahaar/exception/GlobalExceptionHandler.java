@@ -74,6 +74,13 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(UnauthorizedActionException.class)
+    public ResponseEntity<APIResponse<Void>> handleUnauthorizedActionException(UnauthorizedActionException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ResponseBuilder.error(
+                HttpStatus.UNAUTHORIZED.value(), "Unauthorized action", null
+        ));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIResponse<Void>> handleGlobalException(Exception ex, WebRequest request) {
 //        ex.printStackTrace();
