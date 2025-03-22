@@ -2,18 +2,16 @@ package com.innovatrix.ahaar.controller;
 
 import com.innovatrix.ahaar.dto.LocationDTO;
 import com.innovatrix.ahaar.dto.RestaurantSearchDTO;
+import com.innovatrix.ahaar.exception.ResourceNotFoundException;
 import com.innovatrix.ahaar.model.APIResponse;
+import com.innovatrix.ahaar.model.FoodItem;
 import com.innovatrix.ahaar.model.Restaurant;
-import com.innovatrix.ahaar.model.RestaurantOwner;
 import com.innovatrix.ahaar.service.RestaurantCustomerSideService;
 import com.innovatrix.ahaar.util.ResponseBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
 
@@ -40,15 +38,23 @@ public class RestaurantCustomerSideController {
         return ResponseEntity.status(HttpStatus.OK.value()).body(ResponseBuilder.success(HttpStatus.OK.value(), "Restaurants retrieved successfully", restaurantCustomerSideService.findRestaurants(searchDTO)));
     }
 
-//    @GetMapping("/{restaurantId}")
-//    // get a specific restaurant
-//
-//    @GetMapping("/{restaurantId}/items")
-//    // get all items of a restaurant
-//
-//    @GetMapping("/{restaurantId}/items/{itemId}")
-//    // get details of an item
-//
+    @GetMapping("/{restaurantId}")
+    // get a specific restaurant
+    public ResponseEntity<APIResponse<Restaurant>> findRestaurant(@PathVariable Long restaurantId) throws ResourceNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK.value()).body(ResponseBuilder.success(HttpStatus.OK.value(), "Restaurant retrieved successfully", restaurantCustomerSideService.getRestaurantById(restaurantId)));
+    }
+
+    @GetMapping("/{restaurantId}/items")
+    // get all items of a restaurant
+    public ResponseEntity<APIResponse<Set<FoodItem>>> getItemsRestaurant(@PathVariable Long restaurantId) throws ResourceNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK.value()).body(ResponseBuilder.success(HttpStatus.OK.value(), "Items retrieved successfully", restaurantCustomerSideService.getItemsRestaurant(restaurantId)));
+    }
+
+    @GetMapping("/{restaurantId}/items/{itemId}")
+    // get details of an item
+    public ResponseEntity<APIResponse<FoodItem>> getItemDetails(@PathVariable Long restaurantId, @PathVariable Long itemId) throws ResourceNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK.value()).body(ResponseBuilder.success(HttpStatus.OK.value(), "Item details retrieved successfully", restaurantCustomerSideService.getItemDetails(restaurantId, itemId)));
+    }
 
 
 }
