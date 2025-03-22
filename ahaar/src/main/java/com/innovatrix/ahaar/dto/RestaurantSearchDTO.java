@@ -1,5 +1,6 @@
 package com.innovatrix.ahaar.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -8,8 +9,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RestaurantSearchDTO {
-    LocationDTO location;
-    double price;
-    String cuisine;
-    String itemName;
+    @NotNull(message = "Location cannot be null")
+    private LocationDTO location;
+
+    private double price;
+    private String cuisine;
+    private String itemName;
 }

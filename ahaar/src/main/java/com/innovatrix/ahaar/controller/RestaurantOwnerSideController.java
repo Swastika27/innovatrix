@@ -35,7 +35,7 @@ public class RestaurantOwnerSideController {
 
     @GetMapping("/{restaurantId}")
     // get single
-public ResponseEntity<APIResponse<Restaurant>> getRestaurant(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long restaurantId) throws ResourceNotFoundException, UnauthorizedActionException {
+    public ResponseEntity<APIResponse<Restaurant>> getRestaurant(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long restaurantId) throws ResourceNotFoundException, UnauthorizedActionException {
         return ResponseEntity.status(HttpStatus.OK).body(ResponseBuilder.success(HttpStatus.OK.value(), "Restaurant retrived successfully", restaurantOwnerSideService.getRestaurant(userDetails.getUsername(), restaurantId)));
     }
 

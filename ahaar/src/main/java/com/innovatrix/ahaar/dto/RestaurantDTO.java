@@ -2,6 +2,7 @@ package com.innovatrix.ahaar.dto;
 
 import com.innovatrix.ahaar.model.Restaurant;
 import com.innovatrix.ahaar.model.RestaurantOwner;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +18,10 @@ import java.sql.Time;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RestaurantDTO {
+    @NotNull
     private String name;
 
+    @NotNull
     private String contactNumber;
 
     private String cuisine;

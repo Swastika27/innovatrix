@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RestaurantRequestDTO {
-    RestaurantDTO restaurantDTO;
-    LocationDTO locationDTO;
+    private RestaurantDTO restaurantDTO;
+    private LocationDTO locationDTO;
 }

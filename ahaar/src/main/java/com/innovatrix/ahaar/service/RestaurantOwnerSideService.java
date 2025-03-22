@@ -53,6 +53,10 @@ public class RestaurantOwnerSideService {
             throw new UserNotFoundException(user.get().getId());
         }
 
+        if(requestDTO.getLocationDTO() == null) {
+            throw new IllegalArgumentException("Location is required");
+        }
+
         Point location = locationService.createPoint(requestDTO.getLocationDTO().getLatitude(), requestDTO.getLocationDTO().getLongitude());
         Restaurant restaurant = requestDTO.getRestaurantDTO().toRestaurant(owner.get(), location);
         owner.get().addRestaurant(restaurant);
@@ -83,8 +87,8 @@ public class RestaurantOwnerSideService {
 
         restaurant.get().setName(restaurantRequestDTO.getRestaurantDTO().getName());
         restaurant.get().setContactNumber(restaurantRequestDTO.getRestaurantDTO().getContactNumber());
-        Point location = locationService.createPoint(restaurantRequestDTO.getLocationDTO().getLatitude(), restaurantRequestDTO.getLocationDTO().getLongitude());
-        restaurant.get().setLocation(location);
+//        Point location = locationService.createPoint(restaurantRequestDTO.getLocationDTO().getLatitude(), restaurantRequestDTO.getLocationDTO().getLongitude());
+//        restaurant.get().setLocation(location);
         restaurant.get().setCuisine(restaurantRequestDTO.getRestaurantDTO().getCuisine());
         restaurant.get().setOpenTime(restaurantRequestDTO.getRestaurantDTO().getOpenTime());
         restaurant.get().setCloseTime(restaurantRequestDTO.getRestaurantDTO().getCloseTime());
@@ -135,6 +139,10 @@ public class RestaurantOwnerSideService {
 
         if(!Objects.equals(restaurant.get().getOwner().getId(), owner.get().getId())) {
             throw new UnauthorizedActionException();
+        }
+
+        if(foodItemDTO.getServing() <=0 || foodItemDTO.getPrice() <= 0) {
+            throw new IllegalArgumentException("Serving and price must be greater than 0");
         }
 
         FoodItem item = foodItemDTO.toFoodItem();

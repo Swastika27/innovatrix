@@ -10,6 +10,7 @@ public class LocationService {
     private final GeometryFactory geometryFactory = new GeometryFactory();
 
     public Point createPoint(double latitude, double longitude) {
+        // Note: Coordinate constructor takes (x, y) where x=longitude and y=latitude
         return geometryFactory.createPoint(new Coordinate(longitude, latitude));
     }
 }

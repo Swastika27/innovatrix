@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.*;
-import org.springframework.data.repository.cdi.Eager;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -44,7 +46,7 @@ public class RestaurantOwner {
             unique = true)
     private String NID;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<Restaurant> restaurants;
 
@@ -56,7 +58,7 @@ public class RestaurantOwner {
         this.restaurants = new HashSet<>();
     }
 
-    public Restaurant addRestaurant (Restaurant restaurant) {
+    public Restaurant addRestaurant(Restaurant restaurant) {
         restaurants.add(restaurant);
         return restaurant;
     }

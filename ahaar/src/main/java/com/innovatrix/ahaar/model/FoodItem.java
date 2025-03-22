@@ -42,8 +42,7 @@ public class FoodItem {
     private int serving;
 
     @Column(nullable = false)
-    private boolean available;
+    private boolean available = true;
 
-    @Column(nullable = false)
     private String imageUrl;
 }

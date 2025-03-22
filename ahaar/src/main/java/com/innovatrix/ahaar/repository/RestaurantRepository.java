@@ -38,7 +38,7 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
                 LEFT JOIN food_item f ON f.restaurant_id = r.id
 WHERE ST_DWithin(r.location, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326), :radius)
                 AND (:cuisine IS NULL OR r.cuisine ILIKE :cuisine)
-                AND (:itemName IS NULL OR f.name ILIKE %:itemName%)
+                AND (:itemName IS NULL OR f.name ILIKE CONCAT('%', :itemName, '%'))
                 AND (:price IS NULL OR f.price <= :price)
             """, nativeQuery = true)
     Set<Restaurant> findRestaurants(double latitude, double longitude, double radius, String cuisine, String itemName, double price);
