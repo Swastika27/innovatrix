@@ -1,0 +1,8 @@
+# Use a base image with Java
+From eclipse-temurin:17-jdk
+
+# Add the JAR file into the container
+COPY target/myapp.jar app.jar
+
+# Run the app 
+ENTRYPOINT ["java", "-jar", "/app.jar"]
